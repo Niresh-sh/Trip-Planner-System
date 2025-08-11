@@ -1,0 +1,58 @@
+[
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Boudhanath_Stupa_2015.jpg/800px-Boudhanath_Stupa_2015.jpg",
+    "title": "Boudhanath Stupa",
+    "rating": 4.8,
+    "price": 2,
+    "location": "Kathmandu",
+    "description": "One of the largest stupas in the world and a UNESCO World Heritage Site, Boudhanath is a spiritual center for Tibetan Buddhism in Nepal."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Fewa_Lake_Pokhara.jpg/800px-Fewa_Lake_Pokhara.jpg",
+    "title": "Phewa Lake",
+    "rating": 4.7,
+    "price": 0,
+    "location": "Pokhara",
+    "description": "A beautiful freshwater lake surrounded by mountains, offering boating, views of the Annapurna range, and a serene atmosphere."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Swayambhunath_Monkey_Temple.jpg/800px-Swayambhunath_Monkey_Temple.jpg",
+    "title": "Swayambhunath (Monkey Temple)",
+    "rating": 4.6,
+    "price": 2,
+    "location": "Kathmandu",
+    "description": "A sacred Buddhist pilgrimage site with panoramic views of Kathmandu Valley and a large population of monkeys."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Annapurna_Circuit_-_Thorong_La_Pass.jpg/800px-Annapurna_Circuit_-_Thorong_La_Pass.jpg",
+    "title": "Annapurna Circuit Trek",
+    "rating": 5.0,
+    "price": 20,
+    "location": "Annapurna Region",
+    "description": "One of the world's greatest trekking routes, crossing multiple landscapes and high mountain passes including Thorong La."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Lumbini_Maya_Dev_Temple.jpg/800px-Lumbini_Maya_Dev_Temple.jpg",
+    "title": "Lumbini - Birthplace of Buddha",
+    "rating": 4.5,
+    "price": 1,
+    "location": "Lumbini",
+    "description": "A sacred site and UNESCO World Heritage Site where Queen Maya Devi gave birth to Siddhartha Gautama (Buddha)."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg/800px-Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg",
+    "title": "Mount Everest Base Camp",
+    "rating": 5.0,
+    "price": 25,
+    "location": "Khumbu Region",
+    "description": "The world-famous trek to the base of the highest mountain on Earth, offering stunning Himalayan views and Sherpa culture."
+  },
+  {
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Patan_Durbar_Square.jpg/800px-Patan_Durbar_Square.jpg",
+    "title": "Patan Durbar Square",
+    "rating": 4.4,
+    "price": 3,
+    "location": "Lalitpur",
+    "description": "A historical palace complex with rich Newari architecture, temples, and a museum showcasing Nepalese culture."
+  }
+]
