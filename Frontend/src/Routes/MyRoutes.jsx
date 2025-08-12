@@ -13,6 +13,12 @@ import SingleDestination from "../page/SingleDestination";
 import TripSummaryPage from "../component/TripSummary";
 import { ToastContainer } from "react-toastify";
 import AdminDash from "../page/AdminDash";
+import PrivateRoute from "./PrivateRoutes";
+import Dashboard from "../page/UserDashboard/Dashboard";
+import UserDetails from "../page/UserDashboard/UserDetails";
+import UserProfile from "../page/UserDashboard/UserProfile";
+import ChangeProfile from "../page/UserDashboard/ChangeProfile";
+
 
 function MyRoutes() {
   return (
@@ -26,6 +32,18 @@ function MyRoutes() {
           <Route path="tripsummary" element={<TripSummaryPage />} />
           <Route path="Plantrip" element={<PlanTrip />} />
           <Route path="/Destination/:id" element={<SingleDestination />} />
+           <Route  element={<Dashboard />}>
+           <Route
+							path="/UserDetails"
+							element={<UserDetails />}></Route>
+						<Route
+							path="changepassword"
+							element={<UserProfile />}></Route>
+						<Route
+							path="updateprofile"
+							element={<ChangeProfile />}></Route>
+					</Route>
+          
 
           <Route element={<Auth />}>
             <Route path="loginModal" element={<LoginModal />} />
@@ -34,8 +52,19 @@ function MyRoutes() {
           </Route>
         </Route>
 
-        <Route element={<AdminDash />}>
+       
+
+        <Route element={<PrivateRoute />}>
           <Route path="admindash" element={<AdminDash />} />
+          {/* Admin only route */}
+          {/* <Route
+            path="/admin"
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <AdminPage />
+              </PrivateRoute>
+            }
+          /> */}
         </Route>
       </Routes>
     </>

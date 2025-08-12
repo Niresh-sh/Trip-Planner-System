@@ -9,11 +9,12 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 const queryClient = new QueryClient()
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId="79711263829-e3r18c7fo36vf9gps390ughqlado180s.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={clientId}>
       <BrowserRouter>
         <MyRoutes />
       </BrowserRouter>

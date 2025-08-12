@@ -1,10 +1,10 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React,{useState} from "react";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import Login from "../page/auth/LoginModal";
 import { toast } from "react-toastify";
 
-
 function Navbar({ openLoginModal }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const email = localStorage.getItem("email");
 
@@ -13,18 +13,18 @@ function Navbar({ openLoginModal }) {
     const confirmLogout = window.confirm("Do you really want to logout?");
     if (confirmLogout) {
       // You can add actual logout logic here (e.g., clear tokens, redirect, etc.)
-      
+
       localStorage.removeItem("_id"); // remove stored token
       localStorage.removeItem("email");
       navigate("/");
-      
+
       toast.success("Successfully logged out!");
     }
   };
 
   return (
     <div>
-      <nav className="bg-green-600 brightness-110 shadow-lg">
+      <nav className="relative bg-green-600 brightness-110 shadow-lg z-50">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between h-16">
             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
@@ -48,7 +48,7 @@ function Navbar({ openLoginModal }) {
                   </Link>
 
                   {/* <!-- Products Dropdown Trigger --> */}
-                  <div className="relative group">
+                  <div className="relative">
                     <Link
                       to="Destinations"
                       className="text-white hover:bg-gray-600 px-3 py-2 rounded-md text-md font-medium flex items-center"
@@ -83,21 +83,64 @@ function Navbar({ openLoginModal }) {
               </div> */}
               <div className="hidden sm:flex sm:items-center">
                 {/* Conditionally show Login or Logout */}
-                {!email ? (
-                  <button
-                    onClick={openLoginModal}
-                    className="ml-4 bg-slate-800 text-white px-4 py-2 rounded-md text-md font-medium hover:bg-slate-900"
-                  >
-                    <span className="hidden md:inline ml-2">Login</span>
-                  </button>
+                {email ? (
+                  <div className="relative group ">
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="flex items-center text-sm bg-gray-800 rounded-full focus:ring-2 focus:ring-gray-300 "
+                    >
+                      <img
+                        className="w-8 h-8 rounded-full"
+                        src="https://via.placeholder.com/40"
+                        alt="User Avatar"
+                      />
+                    </button>
+
+                    {/* User Dropdown */}
+                    {dropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-[100] overflow: visible">
+                        <div className="p-3 border-b ">
+                          <p className="text-sm font-medium text-gray-800">
+                            {email}
+                          </p>
+                        </div>
+                        <ul className="py-2">
+                          <li>
+                            <NavLink to="/UserDetails" className="dropdown-link">
+                              Dashboard
+                            </NavLink>
+                          </li>
+                        </ul>
+                        <div className="py-2">
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full text-left dropdown-link text-green-500"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <button
-                    onClick={handleLogout}
-                    className="ml-4 bg-slate-800 text-white px-4 py-2 rounded-md text-md font-medium hover:bg-slate-900"
-                  >
-                    {/* <FaUser /> */}
-                    <span className="hidden md:inline ml-2">Logout</span>
-                  </button>
+                  <div className="hidden md:flex space-x-4">
+                    {!email ? (
+                      <button
+                        onClick={openLoginModal}
+                        className="ml-4 bg-slate-800 text-white px-4 py-2 rounded-md text-md font-medium hover:bg-slate-900"
+                      >
+                        <span className="hidden md:inline ml-2">Login</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleLogout}
+                        className="ml-4 bg-slate-800 text-white px-4 py-2 rounded-md text-md font-medium hover:bg-slate-900"
+                      >
+                        {/* <FaUser /> */}
+                        <span className="hidden md:inline ml-2">Logout</span>
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 {/* <span className="md:ml-5 text-lg cursor-pointer">
