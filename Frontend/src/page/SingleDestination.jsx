@@ -2,12 +2,15 @@ import { Link} from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DestinationMap from "../component/DestinationMap";
+import dotenv from "dotenv"
 
 const SingleDestination = () => {
   const { id } = useParams();
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const GoogleMap = import.meta.env.VITE_GOOGLE_MAP
 
 useEffect(() => {
    console.log("Fetching for ID:", id);
@@ -136,7 +139,7 @@ if (!data) return <div className="p-10">Destination not found.</div>;
                 height="100%"
                 loading="lazy"
                 allowFullScreen
-                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBqefaD9fxKEJKVOKic7nliEfua7EV06Bw&q=${data?.latitude},${data?.longitude}`}
+                src={`https://www.google.com/maps/embed/v1/place?key=${GoogleMap}&q=${data?.latitude},${data?.longitude}`}
               />
                            )}
             </div>
