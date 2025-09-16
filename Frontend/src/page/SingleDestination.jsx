@@ -13,16 +13,17 @@ const SingleDestination = () => {
   const GoogleMap = import.meta.env.VITE_GOOGLE_MAP
 
 useEffect(() => {
-   console.log("Fetching for ID:", id);
-  fetch('https://api-trip-destination.vercel.app/api/destination')
+   console.log("useParams id:", id);
+  if (!id) return;
+
+  fetch(`http://localhost:3000/api/destination/get-destination/${id}`)
     .then(res => {
       if (!res.ok) throw new Error("Failed to fetch destinations");
       return res.json();
     })
-    .then(destinations => {
-      const dest = destinations.find(item => item.id === Number(id));
-      if (!dest) throw new Error("Destination not found");
-      setData(dest);
+    .then(response => {
+      if (!response.destination) throw new Error("Destination not found");
+      setData(response.destination);
       setLoading(false);
     })
     .catch(err => {
@@ -30,6 +31,7 @@ useEffect(() => {
       setLoading(false);
     });
 }, [id]);
+
 
 if (loading) return <div className="p-10 flex items-center justify-center"><img src="/loading.svg" alt="Loading" className="h-45 w-45" /></div>;
 if (error) return <div className="p-10 text-red-500">Error: {error}</div>;

@@ -22,14 +22,14 @@ function UserProfile() {
 
     try {
       let response = await axios.put(
-        "http://localhost:3000/change-password",
+        "http://localhost:3000/api/users/change-password",
         {
-          password: oldPassword,
-          confiermPassword: newPassword,
+           oldPassword,
+           newPassword,
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
@@ -40,7 +40,7 @@ function UserProfile() {
         setNewPassword("");
       }
     } catch (e) {
-      setError("Failed to change password. Please try again.");
+      setError(e.response?.data?.message || "Failed to change password.");
       console.error(e.message);
     } finally {
       setLoading(false);

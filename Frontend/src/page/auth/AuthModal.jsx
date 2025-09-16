@@ -45,6 +45,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         localStorage.setItem("email", user.email);
         localStorage.setItem("firstName", user.firstName);
         localStorage.setItem("lastName", user.lastName);
+        localStorage.setItem("role", user.role);
         toast.success("Login successful");
         onClose();
         resetForm();

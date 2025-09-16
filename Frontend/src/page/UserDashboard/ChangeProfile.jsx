@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 function ChangeProfile() {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [error, setError] = useState("");
   const [old_data, setOldData]= useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ function ChangeProfile() {
     const fetchDatas = async () => {
       try {
         let response = await axios.get(
-          "http://127.0.0.1:3000/profile",
+          "http://localhost:3000/api/users/change-profile",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -24,9 +24,9 @@ function ChangeProfile() {
         );
         setOldData(response.data);
         setEmail(response.data.email);
-        setUsername(response.data.username);
+        setFirstName(response.data.firstName);
       } catch (e) {
-        setError("Failed to load category products. Please try again.");
+        setError(" Please try again.");
         console.error(e.message);
       } finally {
         setLoading(false);
@@ -45,7 +45,7 @@ function ChangeProfile() {
         "http://localhost:3000/update-profile",
         {
          email : email,
-         username : username,
+         firstName : firstName,
         },
         {
         // multi parse form data for image
@@ -81,15 +81,15 @@ function ChangeProfile() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-gray-700 dark:text-gray-300 mb-1" htmlFor="old_password">
-            Username
+            firstName
           </label>
           <input
             type="text"
             id="old_password"
-            placeholder="Enter new Username"
+            placeholder="Enter new firstName"
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required
           />
         </div>

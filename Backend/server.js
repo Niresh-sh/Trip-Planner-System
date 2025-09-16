@@ -3,6 +3,12 @@ import express from 'express'
 import UserRoute from './Routes/UserRoute.js';
 import cors from 'cors';
 import Connect from './Config/db.js';
+import { uploadProductImage } from './Middleware/Multer.js';
+import CategoryRoute from './Routes/CategoryRoute.js';
+import DestinationRoute from './Routes/DestinationRoute.js';
+import GuideRoute from './Routes/GuideRoute.js';
+import TripRoute from './Routes/TripRoute.js';
+import BookingRoute from './Routes/BookingRoute.js'
 
 dotenv.config();
 const app = express()
@@ -13,25 +19,36 @@ Connect();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const allowedOrigins = ['http://localhost:5173'];
+let allowedOrigins = ["http://localhost:5173"];
+app.use(cors({
+    origin: allowedOrigins,
+    methods: "GET, POST, PUT, DELETE",
+    allowedHeaders: "Content-Type, Authorization"
+}));
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+// image upaload by multer
+app.use("/uploads", async (req, res) => {
+    try {
+        const image = await uploadProductImage.single("image")(req, res);
+        res.status(200).json({
+            success: true,
+            message: "Image uploaded successfully",
+            image: image
+        })
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message,
+        });
+    }
+});
+app.use("/api/users", UserRoute);
+app.use("/api/category", CategoryRoute);
+app.use("/api/destination", DestinationRoute);
+app.use("/api/guide", GuideRoute);
+app.use('/api/trip',TripRoute);
+app.use('/api/booking', BookingRoute);
 
-app.use('/api/users', UserRoute)
-// app.use('',destination)
-// app.use('',city)
-// app.use('',plantrip)
 app.get('/',(req,res) => {
     res.send("hello ! I'm Niresh Shakya ")
 })

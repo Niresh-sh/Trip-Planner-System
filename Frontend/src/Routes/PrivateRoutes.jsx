@@ -9,12 +9,12 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
   // If not authenticated, redirect to login page
   if (!isAuthenticated) {
-    return <Navigate to="/LoginModal" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   // If user role doesn't match allowedRoles, redirect to the home page or other fallback
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/" replace />;
+if (!isAuthenticated || (allowedRoles && !allowedRoles.includes(userRole))) {
+    return <Navigate to="/admin" replace />;
   }
 
   // If a child element is passed, render it. Otherwise, render the Outlet (for nested routes)

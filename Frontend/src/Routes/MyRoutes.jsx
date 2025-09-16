@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "../page/Home";
 import Register from "../page/auth/Register";
-import LoginModal from "../page/auth/LoginModal";
 import App from "../App";
 import Auth from "../page/auth/Auth";
 import ForgetPassword from "../page/auth/ForgetPassword";
@@ -12,59 +11,70 @@ import About from "../page/About";
 import SingleDestination from "../page/SingleDestination";
 import TripSummaryPage from "../component/TripSummary";
 import { ToastContainer } from "react-toastify";
-import AdminDash from "../page/AdminDash";
 import PrivateRoute from "./PrivateRoutes";
 import Dashboard from "../page/UserDashboard/Dashboard";
 import UserDetails from "../page/UserDashboard/UserDetails";
 import UserProfile from "../page/UserDashboard/UserProfile";
 import ChangeProfile from "../page/UserDashboard/ChangeProfile";
-
+import AdminDestination from "../page/AdminsDashboard/AdminDestination";
+import AdminDash from "../page/AdminsDashboard/AdminDash";
+import AddCategory from "../page/AdminsDashboard/AddCategory";
+import AuthModal from "../page/auth/AuthModal";
+import AdminLogin from "../page/auth/AdminLogin";
+import AdminDashboard from "../page/AdminsDashboard/AdminDashboard";
+import AdminGuide from "../page/AdminsDashboard/AdminGuide";
+import AdminLayout from "../component/AdminLayout";
+import AdminUsers from "../page/AdminsDashboard/AdminUsers";
+import { useNavigate } from "react-router-dom";
+import BookingHistory from "../page/UserDashboard/BookingHistory";
+import BookingConfirmed from "../page/BookingConfirmed";
 
 function MyRoutes() {
+  const Navigate = useNavigate();
+
   return (
     <>
       <ToastContainer />
       <Routes>
         <Route element={<App />}>
           <Route path="/" element={<Home />} />
-          <Route path="About" element={<About />} />
-          <Route path="Destinations" element={<Destinations />} />
-          <Route path="tripsummary" element={<TripSummaryPage />} />
-          <Route path="Plantrip" element={<PlanTrip />} />
-          <Route path="/Destination/:id" element={<SingleDestination />} />
-           <Route  element={<Dashboard />}>
-           <Route
-							path="/UserDetails"
-							element={<UserDetails />}></Route>
-						<Route
-							path="changepassword"
-							element={<UserProfile />}></Route>
-						<Route
-							path="updateprofile"
-							element={<ChangeProfile />}></Route>
-					</Route>
-          
+          <Route path="about" element={<About />} />
+          <Route path="destinations" element={<Destinations />} />
+          <Route path="/tripsummary/:tripId" element={<TripSummaryPage />} />
+          <Route path="plantrip" element={<PlanTrip />} />
+          <Route path="/destination/:id" element={<SingleDestination />} />
+         <Route path="/booking-success/:bookingId" element={<BookingConfirmed />} />
 
+
+
+          {/* User Dashboard Routes (protected) */}
+          <Route element={<PrivateRoute />}>
+            <Route path="dashboard" element={<Dashboard />}>
+              <Route path="userdetails" element={<UserDetails />} />
+              <Route path="changepassword" element={<UserProfile />} />
+              <Route path="updateprofile" element={<ChangeProfile />} />
+               <Route path="bookinghistory" element={<BookingHistory />} />
+            </Route>
+          </Route>
+
+          {/* Auth Routes */}
           <Route element={<Auth />}>
-            <Route path="loginModal" element={<LoginModal />} />
+            <Route path="authmodal" element={<AuthModal />} />
             <Route path="register" element={<Register />} />
-            <Route path="ForgetPassword" element={<ForgetPassword />} />
+            <Route path="forgetpassword" element={<ForgetPassword />} />
           </Route>
         </Route>
-
-       
-
-        <Route element={<PrivateRoute />}>
-          <Route path="admindash" element={<AdminDash />} />
-          {/* Admin only route */}
-          {/* <Route
-            path="/admin"
-            element={
-              <PrivateRoute allowedRoles={["admin"]}>
-                <AdminPage />
-              </PrivateRoute>
-            }
-          /> */}
+        {/* Admin Protected Routes */}
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin/admindashboard" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="admindash" element={<AdminDash />} />
+            <Route path="admindestination" element={<AdminDestination />} />
+            <Route path="addcategory" element={<AddCategory />} />
+            <Route path="adminguide" element={<AdminGuide />} />
+            <Route path="adminusers" element={<AdminUsers />} />
+          </Route>
         </Route>
       </Routes>
     </>

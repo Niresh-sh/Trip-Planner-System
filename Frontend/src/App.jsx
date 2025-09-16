@@ -4,7 +4,7 @@ import Navbar from './component/Navbar';
 import Footer from './component/Footer';
 import { Outlet } from 'react-router-dom';
 import { TripProvider } from './component/TripContext';
-import LoginModal from './page/auth/LoginModal';
+import LoginModal from './page/auth/AdminLogin';
 import AuthModal from './page/auth/AuthModal'; // Make sure path is correct
 
 

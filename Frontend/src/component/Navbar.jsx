@@ -1,6 +1,6 @@
 import React,{useState} from "react";
 import { Link, useNavigate, NavLink } from "react-router-dom";
-import Login from "../page/auth/LoginModal";
+import Login from "../page/auth/AdminLogin";
 import { toast } from "react-toastify";
 
 function Navbar({ openLoginModal }) {
@@ -24,7 +24,7 @@ function Navbar({ openLoginModal }) {
 
   return (
     <div>
-      <nav className="relative bg-green-600 brightness-110 shadow-lg z-50">
+      <nav className="relative bg-green-600 brightness-110 shadow-2xl z-50 rounded-b-xl">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between h-16">
             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
@@ -91,7 +91,7 @@ function Navbar({ openLoginModal }) {
                     >
                       <img
                         className="w-8 h-8 rounded-full"
-                        src="https://via.placeholder.com/40"
+                        src="https://cdn-icons-png.flaticon.com/128/12123/12123009.png"
                         alt="User Avatar"
                       />
                     </button>
@@ -106,7 +106,7 @@ function Navbar({ openLoginModal }) {
                         </div>
                         <ul className="py-2">
                           <li>
-                            <NavLink to="/UserDetails" className="dropdown-link">
+                            <NavLink to="/dashboard/userdetails" className="dropdown-link">
                               Dashboard
                             </NavLink>
                           </li>

@@ -2,52 +2,69 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-const categories = ["All", "Nature", "Adventure", "Cultural", "Relaxation", "Spiritual", "Wildlife"];
-
 const AllDestinations = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const { isPending, error, data } = useQuery({
     queryKey: ["destinations"],
     queryFn: () =>
-      fetch("https://api-trip-destination.vercel.app/api/destination").then((res) =>
-        res.json()
+      fetch("http://localhost:3000/api/destination/get-destination").then(
+        (res) => res.json()
       ),
   });
 
   const navigate = useNavigate();
 
+  const {
+    data: categoryData,
+    isLoading: isCategoryLoading,
+    error: catError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      fetch("http://localhost:3000/api/category/get-category") // update to your real URL
+        .then((res) => res.json()),
+  });
+
+  const categories = [
+    { _id: "all", name: "All" },
+    ...(categoryData?.categories || []),
+  ];
+
   // Filter based on category
-  const filteredData = data?.filter((dest) => {
+  const filteredData = data?.destinations?.filter((dest) => {
     if (selectedCategory === "All") return true;
 
-    // Support array or string category
+    // Support populated category
     if (Array.isArray(dest.category)) {
       return dest.category.some(
-        (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
+        (cat) => cat.name?.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
 
-    return dest.category?.toLowerCase() === selectedCategory.toLowerCase();
+    return (
+      dest.category?.name?.toLowerCase() === selectedCategory.toLowerCase()
+    );
   });
-
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Explore Destinations</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Explore Destinations
+      </h1>
 
       {/* Category Buttons */}
       <div className="flex flex-wrap justify-center gap-3 mb-8">
         {categories.map((category) => (
           <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
+            key={category._id}
+            onClick={() => setSelectedCategory(category.name)}
             className={`px-4 py-2 rounded-full text-sm font-medium border transition ${
-              selectedCategory === category
+              selectedCategory === category.name
                 ? "bg-green-600 text-white"
                 : "bg-white text-green-600 border-green-500 hover:bg-green-50"
             }`}
           >
-            {category}
+            {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
           </button>
         ))}
       </div>
@@ -65,11 +82,12 @@ const AllDestinations = () => {
       {/* Destination Grid */}
       {!isPending && !error && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
           {filteredData?.map((dest) => (
             <div
-              key={dest.id}
+              key={dest._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden relative transition-transform duration-300 hover:scale-105 cursor-pointer"
-              onClick={() => navigate(`/destination/${dest.id}`)}
+              onClick={() => navigate(`/destination/${dest._id}`)}
             >
               {/* Image & Badges */}
               <div className="relative">
@@ -81,7 +99,9 @@ const AllDestinations = () => {
                 {/* Rating Badge */}
                 <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
                   <span className="text-orange-500">⭐</span>
-                  <span className="text-gray-800 font-medium text-xs">{dest.rating}</span>
+                  <span className="text-gray-800 font-medium text-xs">
+                    {dest.rating}
+                  </span>
                 </span>
 
                 {/* Price Badge */}
@@ -121,7 +141,9 @@ const AllDestinations = () => {
                 </p>
               </div>
             </div>
-          ))}
+          )
+          )
+          }
         </div>
       )}
     </div>

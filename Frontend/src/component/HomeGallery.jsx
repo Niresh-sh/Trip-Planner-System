@@ -66,8 +66,8 @@ function HomeGallery() {
               onClick={() => trackFilter(cat)}
               className={`px-4 py-2 rounded-full text-sm transition ${
                 filter === cat
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-blue-100"
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-green-100"
               }`}
             >
               {cat}

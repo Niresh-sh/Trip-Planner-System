@@ -24,21 +24,27 @@ function Dashboard() {
         <nav className="mt-4">
           <ul className="space-y-3">
             <li>
-              <NavLink to="/UserDetails" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5">
+              <NavLink to="userdetails" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5">
                 <FaUser className="text-blue-500" />
                 User Details
               </NavLink>
             </li>
             <li>
-              <NavLink to="/updateprofile" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5">
+              <NavLink to="updateprofile" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5">
                 <FaEdit className="text-green-500" />
                 Update Profile
               </NavLink>
             </li>
             <li>
-              <NavLink to="/changepassword" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5 ">
+              <NavLink to="changepassword" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5 ">
                 <FaLock className="text-yellow-500" />
                 Change Password
+              </NavLink>
+            </li>
+             <li>
+              <NavLink to="bookinghistory" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5 ">
+                <FaLock className="text-yellow-500" />
+                Booking History
               </NavLink>
             </li>
             <li>
