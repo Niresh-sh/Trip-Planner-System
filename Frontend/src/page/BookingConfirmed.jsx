@@ -83,6 +83,7 @@ function BookingConfirmed() {
           <p><strong>Name:</strong> {guide.name}</p>
           <p><strong>Phone:</strong> {guide.phone}</p>
           <p><strong>Languages:</strong> {guide.languages?.join(', ') || 'N/A'}</p>
+          <p><strong>Location:</strong> {guide.destinationId?.location || 'N/A'}</p>
         </div>
       )}
 

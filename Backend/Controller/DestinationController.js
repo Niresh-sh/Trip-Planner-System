@@ -1,5 +1,7 @@
 import destinationModel from "../Models/DestinationModel.js";
 import categoryModel from "../Models/CategoryModel.js";
+import logActivity from "../utils/logActivity.js";
+import mongoose from "mongoose";
 
 const CreateDestinationController = async (req, res) => {
   try {
@@ -22,17 +24,18 @@ const CreateDestinationController = async (req, res) => {
       nearbyAttractions,
     } = req.body;
 
-     // Fetch category name from ID
-    // const categoryDoc = await categoryModel.findById(category);
-    // const categoryName = categoryDoc?.name || "Uncategorized";
-
-    // Parse fields that come in stringified JSON format
-    const parsedHighlights = typeof highlights === "string" ? JSON.parse(highlights) : highlights;
-    const parsedIncluded = typeof included === "string" ? JSON.parse(included) : included;
-    const parsedNotIncluded = typeof notIncluded === "string" ? JSON.parse(notIncluded) : notIncluded;
-    const parsedNearbyAttractions = typeof nearbyAttractions === "string" ? JSON.parse(nearbyAttractions) : nearbyAttractions;
-    const parsedBestTime = typeof bestTime === "string" ? JSON.parse(bestTime) : bestTime;
-
+    const parsedHighlights =
+      typeof highlights === "string" ? JSON.parse(highlights) : highlights;
+    const parsedIncluded =
+      typeof included === "string" ? JSON.parse(included) : included;
+    const parsedNotIncluded =
+      typeof notIncluded === "string" ? JSON.parse(notIncluded) : notIncluded;
+    const parsedNearbyAttractions =
+      typeof nearbyAttractions === "string"
+        ? JSON.parse(nearbyAttractions)
+        : nearbyAttractions;
+    const parsedBestTime =
+      typeof bestTime === "string" ? JSON.parse(bestTime) : bestTime;
 
     const destination = new destinationModel({
       title,
@@ -41,18 +44,30 @@ const CreateDestinationController = async (req, res) => {
       longitude,
       rating,
       duration,
-      category ,
+      category,
       cost,
       description,
       highlights: parsedHighlights,
       elevation,
-      bestTime : parsedBestTime,
+      bestTime: parsedBestTime,
       image,
-      included : parsedIncluded,
-      notIncluded : parsedNotIncluded,
-      nearbyAttractions : parsedNearbyAttractions,
+      included: parsedIncluded,
+      notIncluded: parsedNotIncluded,
+      nearbyAttractions: parsedNearbyAttractions,
     });
+
     await destination.save();
+
+    // Log with destination title (not ID) — non-blocking
+    if (req.user?._id) {
+      logActivity({
+        userId: req.user._id,
+        actionType: "create_destination",
+        text: `Created destination: ${destination.title}`,
+        iconColor: "blue",
+      }).catch(() => {});
+    }
+
     res.status(200).json({
       success: true,
       message: "Destination created successfully",
@@ -69,7 +84,7 @@ const CreateDestinationController = async (req, res) => {
 
 const getAllDestinationController = async (req, res) => {
   try {
-    const destinations = await destinationModel.find().populate('category');
+    const destinations = await destinationModel.find().populate("category");
     res.status(200).json({
       success: true,
       destinations: destinations,
@@ -104,6 +119,7 @@ const UpdateDestinationController = async (req, res) => {
       description,
       category,
     } = req.body;
+
     const destination = await destinationModel.findByIdAndUpdate(
       id,
       {
@@ -126,6 +142,24 @@ const UpdateDestinationController = async (req, res) => {
       },
       { new: true }
     );
+
+    if (!destination) {
+      return res.status(404).json({
+        success: false,
+        message: "Destination not found",
+      });
+    }
+
+    // Log with destination title (not ID) — non-blocking
+    if (req.user?._id) {
+      logActivity({
+        userId: req.user._id,
+        actionType: "update_destination",
+        text: `Updated destination: ${destination.title}`,
+        iconColor: "yellow",
+      }).catch(() => {});
+    }
+
     res.status(200).json({
       success: true,
       message: "Destination updated successfully",
@@ -143,6 +177,24 @@ const DeleteDestinationController = async (req, res) => {
   try {
     const { id } = req.params;
     const destination = await destinationModel.findByIdAndDelete(id);
+
+    if (!destination) {
+      return res.status(404).json({
+        success: false,
+        message: "Destination not found",
+      });
+    }
+
+    // Log with destination title (not ID) — non-blocking
+    if (req.user?._id) {
+      logActivity({
+        userId: req.user._id,
+        actionType: "delete_destination",
+        text: `Deleted destination: ${destination.title}`,
+        iconColor: "red",
+      }).catch(() => {});
+    }
+
     res.status(200).json({
       success: true,
       message: "Destination deleted successfully",
@@ -156,13 +208,10 @@ const DeleteDestinationController = async (req, res) => {
   }
 };
 
-import mongoose from "mongoose";
-
 const GetSingleDestinationController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if id is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -191,7 +240,6 @@ const GetSingleDestinationController = async (req, res) => {
     });
   }
 };
-
 
 export {
   GetSingleDestinationController,

@@ -9,10 +9,17 @@ import DestinationRoute from './Routes/DestinationRoute.js';
 import GuideRoute from './Routes/GuideRoute.js';
 import TripRoute from './Routes/TripRoute.js';
 import BookingRoute from './Routes/BookingRoute.js'
+import StatsRoute from './Routes/StatsRoute.js';
+import AdminBookingRoute from './Routes/AdminBookingRoute.js'
+import  initSocket  from './Socket.js'
+import http from 'http';
+import ActivityRoute from './Routes/ActivityRoute.js';
 
 dotenv.config();
 const app = express()
-const port = process.env.PORT || 5000
+const httpServer = http.createServer(app); // create HTTP server
+const io = initSocket(httpServer); // initialize socket.io
+const port = process.env.PORT || 5000;
 
 Connect();
 
@@ -48,11 +55,15 @@ app.use("/api/destination", DestinationRoute);
 app.use("/api/guide", GuideRoute);
 app.use('/api/trip',TripRoute);
 app.use('/api/booking', BookingRoute);
+app.use('/api/stats', StatsRoute);
+app.use('/api/adminbooking', AdminBookingRoute);
+app.use('/api/activity', ActivityRoute);
 
 app.get('/',(req,res) => {
     res.send("hello ! I'm Niresh Shakya ")
 })
 
-app.listen(port,() => {
+httpServer.listen(port,() => {
     console.log(`listening on Port ${port}`);
 })
+

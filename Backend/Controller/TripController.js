@@ -1,5 +1,6 @@
 import Destinations from '../Models/DestinationModel.js'
 import Trip from '../Models/Trip.js';
+import  logActivity  from "../utils/logActivity.js";
 
 const getDestinations = async (req, res) => {
   try {

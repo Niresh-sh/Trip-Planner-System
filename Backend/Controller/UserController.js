@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
 import UserTokenModel from "../Models/UserTokenModel.js";
 import { OAuth2Client } from "google-auth-library";
+import  logActivity  from "../utils/logActivity.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -14,22 +15,35 @@ const LoginController = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
+
     const token = jsonwebtoken.sign(
-     { id: user._id, email: user.email, role: user.role },
+      { id: user._id, email: user.email, role: user.role },
       process.env.SECURE,
       { expiresIn: "1d" }
     );
+
     await UserTokenModel.create({ userId: user._id, token });
+
+    // Log user login
+    await logActivity({
+      type: "user",
+      user: user._id,
+      text: `User logged in`,
+      info: `${user.email}`,
+      iconColor: "green",
+    });
+
     res.status(200).json({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       token,
-      role: user.role, 
+      role: user.role,
       message: "User logged in successfully",
     });
   } catch (e) {
@@ -53,6 +67,16 @@ const RegisterController = async (req, res) => {
       password: hashedPassword,
       role: role || "user",
     });
+
+    // Log registration
+    await logActivity({
+      type: "user",
+      user: user._id,
+      text: "New user registered",
+      info: `${firstName} ${lastName} | ${email}`,
+      iconColor: "yellow",
+    });
+
     res.status(200).json({ user, message: "User created successfully" });
   } catch (e) {
     console.log(e.message);
@@ -64,11 +88,11 @@ const UpdatePasswordController = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
-if (!authHeader || !authHeader.startsWith("Bearer ")) {
-  return res.status(401).json({ message: "Authorization token missing or invalid" });
-}
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Authorization token missing or invalid" });
+    }
 
-const splitToken = authHeader.split(" ")[1];
+    const splitToken = authHeader.split(" ")[1];
     const decoded = jsonwebtoken.verify(splitToken, process.env.SECURE);
     req.user = decoded;
 
@@ -93,8 +117,15 @@ const splitToken = authHeader.split(" ")[1];
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    await UserModel.findByIdAndUpdate(req.user.id, {
-      password: hashedPassword,
+    await UserModel.findByIdAndUpdate(req.user.id, { password: hashedPassword });
+
+    // Log password change
+    await logActivity({
+      type: "user",
+      user: req.user.id,
+      text: "User updated password",
+      info: `${user.email}`,
+      iconColor: "blue",
     });
 
     res.status(200).json({ message: "Password updated successfully" });
@@ -104,11 +135,9 @@ const splitToken = authHeader.split(" ")[1];
   }
 };
 
-
 const UpdateProfileController = async (req, res) => {
   try {
     const { token } = req.headers;
-    // split token
     const splitToken = token.split(" ")[1];
     const decoded = jsonwebtoken.verify(splitToken, process.env.SECURE);
     req.user = decoded;
@@ -116,16 +145,20 @@ const UpdateProfileController = async (req, res) => {
     if (!userToken) {
       return res.status(400).json({ message: "Invalid token" });
     }
+
     const { email, firstName } = req.body;
-    const user = await UserModel.findByIdAndUpdate(req.user.id, {
-      email,
-      firstName,
+    const user = await UserModel.findByIdAndUpdate(req.user.id, { email, firstName });
+
+    // Log profile update
+    await logActivity({
+      type: "user",
+      user: req.user.id,
+      text: "User updated profile",
+      info: `${email}`,
+      iconColor: "blue",
     });
-    res.status(200).json({
-      success: true,
-      user,
-      message: "Profile updated successfully",
-    });
+
+    res.status(200).json({ success: true, user, message: "Profile updated successfully" });
   } catch (e) {
     console.log(e.message);
   }
@@ -138,6 +171,16 @@ const LogoutController = async (req, res) => {
     const decoded = jsonwebtoken.verify(splitToken, process.env.SECURE);
     req.user = decoded;
     await UserTokenModel.findOneAndDelete({ userId: req.user.id });
+
+    // Log logout
+    await logActivity({
+      type: "user",
+      user: req.user.id,
+      text: "User logged out",
+      info: `${req.user.email}`,
+      iconColor: "gray",
+    });
+
     res.status(200).json({ message: "User logged out successfully" });
   } catch (e) {
     console.log(e.message);
@@ -148,9 +191,19 @@ const LogoutController = async (req, res) => {
 const GetAllUserController = async (req, res) => {
   try {
     const user = await UserModel.find();
-    res
-      .status(200)
-      .json({ success: true, user, message: "User fetched successfully" });
+
+    // Log fetching all users (admin action)
+    if (req.user?.role === "admin") {
+      await logActivity({
+        type: "admin",
+        user: req.user.id,
+        text: "Admin fetched all users",
+        info: `${user.length} users`,
+        iconColor: "green",
+      });
+    }
+
+    res.status(200).json({ success: true, user, message: "User fetched successfully" });
   } catch (e) {
     console.log(e.message);
     res.status(500).json({ message: "Server error" });
@@ -160,12 +213,7 @@ const GetAllUserController = async (req, res) => {
 const GoogleLoginController = async (req, res) => {
   try {
     const { id_token } = req.body;
-
-    const ticket = await client.verifyIdToken({
-      idToken: id_token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
+    const ticket = await client.verifyIdToken({ idToken: id_token, audience: process.env.GOOGLE_CLIENT_ID });
     const payload = ticket.getPayload();
     const { sub, email, given_name, family_name } = payload;
 
@@ -189,16 +237,29 @@ const GoogleLoginController = async (req, res) => {
           role: "user",
           password: "",
         });
+
+        // Log new user registration via Google
+        await logActivity({
+          type: "user",
+          user: user._id,
+          text: "New user registered via Google",
+          info: `${given_name} ${family_name} | ${email}`,
+          iconColor: "yellow",
+        });
       }
     }
 
-    const token = jsonwebtoken.sign(
-      { id: user._id, email: user.email },
-      process.env.SECURE,
-      { expiresIn: "1d" }
-    );
-
+    const token = jsonwebtoken.sign({ id: user._id, email: user.email }, process.env.SECURE, { expiresIn: "1d" });
     await UserTokenModel.create({ userId: user._id, token });
+
+    // Log Google login
+    await logActivity({
+      type: "user",
+      user: user._id,
+      text: "User logged in via Google",
+      info: `${user.email}`,
+      iconColor: "green",
+    });
 
     res.status(200).json({
       firstName: user.firstName,
@@ -214,11 +275,21 @@ const GoogleLoginController = async (req, res) => {
   }
 };
 
- const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
-    if (!deletedUser) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({ message: 'User deleted' });
+    const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
+    if (!deletedUser) return res.status(404).json({ message: "User not found" });
+
+    // Log admin deleting a user
+    await logActivity({
+      type: "admin",
+      user: req.user.id,
+      text: `Admin deleted user`,
+      info: `${deletedUser.email}`,
+      iconColor: "red",
+    });
+
+    res.status(200).json({ message: "User deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -232,5 +303,5 @@ export {
   LogoutController,
   GetAllUserController,
   GoogleLoginController,
-  deleteUser
+  deleteUser,
 };

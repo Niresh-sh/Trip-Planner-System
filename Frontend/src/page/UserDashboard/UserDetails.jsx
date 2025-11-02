@@ -5,13 +5,28 @@ function UserDetails() {
   const firstName = localStorage.getItem("firstName") || "Not Available";
   const lastName = localStorage.getItem("lastName") || "Not Available";
   const role = localStorage.getItem("role") || "Not Available";
-  const user_id = localStorage.getItem("_id") || "Not Available";
+
+  // Try stored ids first
+  let userId = localStorage.getItem("_id") || localStorage.getItem("userId");
+
+  // Fallback: decode token payload to get { id }
+  if (!userId) {
+    const token = localStorage.getItem("token");
+    if (token && token.split(".").length === 3) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        userId = payload?.id || userId;
+      } catch {}
+    }
+  }
+
+  const user_id = userId || "Not Available";
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center mb-4">User Details</h2>
-        
+
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
             <FaEnvelope className="text-blue-500" />

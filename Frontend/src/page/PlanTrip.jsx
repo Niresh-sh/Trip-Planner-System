@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -19,10 +19,31 @@ export default function PlanTrip() {
 
   const GUIDE_FEE = 1000;
 
+  // Prefill name/email from localStorage when the form loads
+  useEffect(() => {
+    const firstName = localStorage.getItem("firstName") || "";
+    const lastName = localStorage.getItem("lastName") || "";
+    const email = localStorage.getItem("email") || "";
+    const phone = localStorage.getItem("phone") || "";
+
+    const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
+    setContactInfo((prev) => ({
+      ...prev,
+      name: fullName || prev.name,
+      email: email || prev.email,
+      phone: phone || prev.phone,
+    }));
+  }, []);
+
+  // Fetch destinations
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/trip/getdest")
-      .then((res) => setDestinations(res.data))
+      .then((res) =>
+        setDestinations(
+          Array.isArray(res.data) ? res.data : res.data?.destinations || []
+        )
+      )
       .catch((err) => console.error(err));
   }, []);
 
@@ -42,6 +63,32 @@ export default function PlanTrip() {
     return selectedDestination?.duration || "N/A";
   };
 
+  const isValidDate = useMemo(() => {
+    if (!startDate) return false;
+    try {
+      const d = new Date(startDate);
+      return d.toISOString().split("T")[0] >= getTomorrowDate();
+    } catch {
+      return false;
+    }
+  }, [startDate]);
+
+  // Recommendations now depend only on budget, date, and persons
+  const readyToRecommend = useMemo(() => {
+    return Number(budget) > 0 && persons > 0 && isValidDate;
+  }, [budget, persons, isValidDate]);
+
+  // Filter destinations by budget only (category removed)
+  const recommendedDestinations = useMemo(() => {
+    if (!readyToRecommend) return [];
+    const fee = includeGuide ? GUIDE_FEE : 0;
+
+    return destinations.filter((d) => {
+      const total = (Number(d.cost) || 0) * persons + fee;
+      return total <= Number(budget);
+    });
+  }, [readyToRecommend, destinations, includeGuide, persons, budget]);
+
   const validateForm = () => {
     const formErrors = {};
     let isValid = true;
@@ -51,13 +98,8 @@ export default function PlanTrip() {
       isValid = false;
     }
 
-    if (!startDate || new Date(startDate) < new Date(getTomorrowDate())) {
+    if (!isValidDate) {
       formErrors.startDate = "Start date must be from tomorrow onwards.";
-      isValid = false;
-    }
-
-    if (!selectedDestination) {
-      formErrors.selectedDestination = "Please select a destination.";
       isValid = false;
     }
 
@@ -92,9 +134,9 @@ export default function PlanTrip() {
     const duration = calculateDuration();
 
     const tripData = {
-      budget,
+      budget: Number(budget),
       startDate,
-      persons,
+      persons: Number(persons),
       contactInfo,
       selectedDestination,
       guideIncluded: includeGuide,
@@ -116,40 +158,48 @@ export default function PlanTrip() {
           Plan Your Dream Trip
         </h2>
 
+        {/* Budget */}
+        <label className="block text-sm font-medium text-gray-700">Estimated Budget (₹)</label>
         <input
           type="number"
           placeholder="Enter your budget"
           value={budget}
           onChange={(e) => setBudget(Number(e.target.value))}
           className="w-full border border-gray-300 rounded px-4 py-2"
+          min={1}
         />
         {errors.budget && (
           <p className="text-red-500 text-sm">{errors.budget}</p>
         )}
 
+        {/* Date */}
+        <label className="block text-sm font-medium text-gray-700 mt-4">Start Date</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           min={getTomorrowDate()}
-          className="w-full border border-gray-300 rounded px-4 py-2 mt-4"
+          className="w-full border border-gray-300 rounded px-4 py-2"
         />
         {errors.startDate && (
           <p className="text-red-500 text-sm">{errors.startDate}</p>
         )}
 
+        {/* Persons */}
+        <label className="block text-sm font-medium text-gray-700 mt-4">Number of Persons</label>
         <input
           type="number"
           placeholder="Number of Persons"
           value={persons}
           onChange={(e) => setPersons(Number(e.target.value))}
-          className="w-full border border-gray-300 rounded px-4 py-2 mt-4"
+          className="w-full border border-gray-300 rounded px-4 py-2"
           min={1}
         />
         {errors.persons && (
           <p className="text-red-500 text-sm">{errors.persons}</p>
         )}
 
+        {/* Guide Option */}
         <label className="block mt-4">
           <input
             type="checkbox"
@@ -160,6 +210,7 @@ export default function PlanTrip() {
           I want a guide (₹{GUIDE_FEE})
         </label>
 
+        {/* Contact Information */}
         <h3 className="text-sm font-semibold pt-6">Contact Information</h3>
 
         <input
@@ -201,15 +252,20 @@ export default function PlanTrip() {
         <h2 className="text-lg font-semibold text-green-600 mb-2">
           Recommended Destinations
         </h2>
-        {!budget || !startDate ? (
+
+        {!readyToRecommend ? (
           <p className="text-gray-500">
-            Enter budget and date to see recommendations.
+            Fill budget, start date, and persons to see recommendations.
+          </p>
+        ) : recommendedDestinations.length === 0 ? (
+          <p className="text-gray-500">
+            No destinations match your budget. Try adjusting budget or persons.
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {destinations
-              .filter((d) => d.cost <= budget)
-              .map((dest) => (
+            {recommendedDestinations.map((dest) => {
+              const total = (Number(dest.cost) || 0) * persons + (includeGuide ? GUIDE_FEE : 0);
+              return (
                 <div
                   key={dest._id}
                   onClick={() => setSelectedDestination(dest)}
@@ -225,19 +281,30 @@ export default function PlanTrip() {
                     className="w-full h-24 object-cover rounded"
                   />
                   <h3 className="font-semibold mt-2">{dest.title}</h3>
-                  <p className="text-sm text-gray-500">₹{dest.cost}</p>
+                  <p className="text-sm text-gray-600">Base: ₹{dest.cost}</p>
+                  <p className="text-sm text-gray-600">
+                    Estimated Total: ₹{total}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Duration: {dest.duration || "N/A"}
+                  </p>
                 </div>
-              ))}
+              );
+            })}
           </div>
         )}
+
         <p className="text-lg font-semibold mt-6">
           Total Cost: ₹{calculateTotalCost()}
         </p>
         <button
           onClick={handleTripSummary}
-          className="mt-4 py-2 w-full bg-green-500 hover:bg-gray-600 text-white font-semibold rounded"
+          disabled={!selectedDestination}
+          className={`mt-4 py-2 w-full ${
+            selectedDestination ? "bg-green-500 hover:bg-gray-600" : "bg-gray-300 cursor-not-allowed"
+          } text-white font-semibold rounded`}
         >
-          Show Trip Summary
+          {selectedDestination ? "Show Trip Summary" : "Select a Destination"}
         </button>
       </div>
     </div>

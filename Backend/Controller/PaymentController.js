@@ -5,6 +5,7 @@ import Destination from '../Models/DestinationModel.js';
 import jwt from "jsonwebtoken";
 import UserToken from "../Models/UserTokenModel.js";
 import request from "request";
+import { logActivity } from "../utils/logActivity.js";
 
 export const initializePayment = async (req, res) =>
 {

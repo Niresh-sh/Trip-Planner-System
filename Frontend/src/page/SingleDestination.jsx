@@ -2,7 +2,7 @@ import { Link} from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DestinationMap from "../component/DestinationMap";
-import dotenv from "dotenv"
+
 
 const SingleDestination = () => {
   const { id } = useParams();
@@ -11,6 +11,7 @@ const SingleDestination = () => {
   const [error, setError] = useState(null);
 
   const GoogleMap = import.meta.env.VITE_GOOGLE_MAP
+  
 
 useEffect(() => {
    console.log("useParams id:", id);

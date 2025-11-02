@@ -13,7 +13,7 @@ function AdminGuide() {
 
   const fetchGuides = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/guide/all",);
+      const res = await axios.get("http://localhost:3000/api/guide/all");
       setGuides(res.data);
     } catch (err) {
       setError("Failed to load guides");
@@ -28,65 +28,66 @@ function AdminGuide() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleAddGuide = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  const handleAddGuide = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  const languagesArray = form.languages.split(',').map((lang) => lang.trim());
+    const languagesArray = form.languages.split(",").map((lang) => lang.trim());
 
-  try {
-    if (editingId) {
-      // Update existing guide
-      const res = await axios.put(`http://localhost:3000/api/guide/update/${editingId}`, {
-        name: form.name,
-        phone: form.phone,
-        languages: languagesArray,
-      });
+    try {
+      if (editingId) {
+        // Update existing guide
+        const res = await axios.put(
+          `http://localhost:3000/api/guide/update/${editingId}`,
+          {
+            name: form.name,
+            phone: form.phone,
+            languages: languagesArray,
+          }
+        );
 
-      setGuides(guides.map(g => g._id === editingId ? res.data : g));
-    } else {
-      // Add new guide
-      const res = await axios.post('http://localhost:3000/api/guide/create', {
-        name: form.name,
-        phone: form.phone,
-        languages: languagesArray,
-      });
+        setGuides(guides.map((g) => (g._id === editingId ? res.data : g)));
+      } else {
+        // Add new guide
+        const res = await axios.post("http://localhost:3000/api/guide/create", {
+          name: form.name,
+          phone: form.phone,
+          languages: languagesArray,
+        });
 
-      setGuides([...guides, res.data]);
+        setGuides([...guides, res.data]);
+      }
+
+      // Reset form
+      setForm({ name: "", phone: "", languages: "" });
+      setEditingId(null);
+    } catch (err) {
+      setError("Failed to save guide");
+    } finally {
+      setLoading(false);
     }
-
-    // Reset form
-    setForm({ name: '', phone: '', languages: '' });
-    setEditingId(null);
-  } catch (err) {
-    setError('Failed to save guide');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const [editingId, setEditingId] = useState(null);
 
-const handleEdit = (guide) => {
-  setForm({
-    name: guide.name,
-    phone: guide.phone,
-    languages: guide.languages.join(', ')
-  });
-  setEditingId(guide._id);
-};
+  const handleEdit = (guide) => {
+    setForm({
+      name: guide.name,
+      phone: guide.phone,
+      languages: guide.languages.join(", "),
+    });
+    setEditingId(guide._id);
+  };
 
-const handleDelete = async (id) => {
-  try {
-    await axios.delete(`http://localhost:3000/api/guide/delete/${id}`);
-    setGuides(guides.filter((g) => g._id !== id));
-  } catch (err) {
-    setError('Failed to delete guide');
-  }
-};
-
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/guide/delete/${id}`);
+      setGuides(guides.filter((g) => g._id !== id));
+    } catch (err) {
+      setError("Failed to delete guide");
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -118,22 +119,24 @@ const handleDelete = async (id) => {
                   </td>
                   <td className="py-2 px-4 border-b">{guide.status}</td>
                   <td className="py-2 px-4 border-b">
-                    {guide.status === "Occupied" ? guide.location : "—"}
+                    {guide.status === "Occupied"
+                      ?guide.assignedDestination?.location
+                      : "—"}
                   </td>
                   <td className="space-x-2">
-        <button
-          onClick={() => handleEdit(guide)}
-          className="px-3 py-1 text-sm bg-green-400 text-white rounded"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => handleDelete(guide._id)}
-          className="px-3 py-1 text-sm bg-gray-500 text-white rounded"
-        >
-          Delete
-        </button>
-      </td>
+                    <button
+                      onClick={() => handleEdit(guide)}
+                      className="px-3 py-1 text-sm bg-green-400 text-white rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(guide._id)}
+                      className="px-3 py-1 text-sm bg-gray-500 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

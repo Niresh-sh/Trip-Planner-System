@@ -1,7 +1,7 @@
 import { CreateCategoryController, 
     getAllCategoryController , 
     UpdateCategoryController, 
-    DeleteCategoryController} from "../controller/CategoryController.js";
+    DeleteCategoryController} from '../Controller/CategoryController.js';
 import express from "express";
 import  { categoryValidationHandler, validateCategory } from '../Middleware/CategoryValidator.js';
 const router = express.Router();

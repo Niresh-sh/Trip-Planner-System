@@ -1,37 +1,60 @@
 import React, { useState, useEffect } from 'react';
 
-const categories = ['All','Nature', 'Adventure', 'Cultural', 'Relaxation', 'Spiritual', 'Wildlife'];
-
 function Category() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [filtered, setFiltered] = useState([]);
+  const [allDest, setAllDest] = useState([]);
+  const [categories, setCategories] = useState(['All']);
   const [loading, setLoading] = useState(false);
 
-  const fetchDestinations = async (category) => {
-    setLoading(true);
-
-    try {
-      const url =
-        category === 'All'
-          ? 'https://api-trip-destination.vercel.app/api/destination'
-          : `https://api-trip-destination.vercel.app/api/destination?category=${encodeURIComponent(
-              category
-            )}`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-      setFiltered(data);
-    } catch (error) {
-      console.error('Error fetching destinations:', error);
-      setFiltered([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Fetch categories from backend
   useEffect(() => {
-    fetchDestinations(activeCategory);
-  }, [activeCategory]);
+    (async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/category');
+        const data = await res.json();
+        const list = (data?.categories || []).map(c => c.name).filter(Boolean);
+        setCategories(['All', ...list]);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    })();
+  }, []);
+
+  // Fetch all destinations once
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('http://localhost:3000/api/destination');
+        const data = await res.json();
+        const dests = Array.isArray(data) ? data : (data?.destinations || []);
+        setAllDest(dests);
+      } catch (err) {
+        console.error('Error fetching destinations:', err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  // Filter on activeCategory change
+  useEffect(() => {
+    if (activeCategory === 'All') {
+      setFiltered(allDest);
+    } else {
+      const cat = activeCategory.toLowerCase().trim();
+      setFiltered(
+        allDest.filter(d => {
+          const dCat =
+            typeof d.category === 'string'
+              ? d.category.toLowerCase().trim()
+              : (d.category?.name || d.category?.title || '').toLowerCase().trim();
+          return dCat === cat;
+        })
+      );
+    }
+  }, [activeCategory, allDest]);
 
   return (
     <div className="w-full px-4">
@@ -68,7 +91,7 @@ function Category() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           {filtered.map((dest) => (
             <div
-              key={dest.id}
+              key={dest._id || dest.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
               <img
@@ -80,7 +103,7 @@ function Category() {
                 <h2 className="text-lg font-semibold text-gray-800">{dest.title}</h2>
                 <p className="text-sm text-gray-500">{dest.location}</p>
                 <p className="text-yellow-500 text-sm">
-                  ⭐ {dest.rating} ({dest.reviews} reviews)
+                  ⭐ {dest.rating} {dest.reviews ? `(${dest.reviews} reviews)` : ''}
                 </p>
                 <p className="text-sm text-gray-400">{dest.duration}</p>
               </div>

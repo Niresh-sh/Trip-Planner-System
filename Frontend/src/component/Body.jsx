@@ -11,6 +11,7 @@ import {
   FaMagic,
   FaUsers,
   FaShieldAlt,
+  FaSearchLocation
 } from "react-icons/fa";
 import HomeGallery from "./HomeGallery";
 
@@ -34,17 +35,19 @@ function Body() {
       setFiltered([]);
       return;
     }
-    // Simple case-insensitive search on destination name
-    const results = destinations.filter((dest) =>
-      (dest.name || dest.title || "")
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    setFiltered(results.slice(0, 5)); // limit to top 5 results
-  }, [query, destinations]);
+    // Modify the filter logic to search across name, title, and location
+  const results = destinations.filter((dest) =>
+    // Check if any of the destination properties contain the query string
+    [dest.name, dest.title, dest.location].some((field) =>
+      field?.toLowerCase().includes(query.toLowerCase())
+    )
+  );
+
+  setFiltered(results.slice(0, 5)); // limit to top 5 results
+}, [query, destinations]);
 
   function onSelect(dest) {
-    setQuery(dest.name || dest.title);
+    setQuery(dest.name || dest.title || dest.location);
     setFiltered([]);
     // Navigate to destination detail page
     navigate(`/destination/${dest._id}`);
@@ -52,8 +55,8 @@ function Body() {
 
   return (
     <>
-      <FadeInSection>
-        <section className="text-center bg-gray-100 pt-3 z-50 pb-12">
+      {/* <FadeInSection> */}
+        <section className="relative z-[99]  text-center bg-gray-100 pt-3 pb-12">
           <h1 className="text-4xl p-4 font-bold justify-center">Where To?</h1>
 
           <div className="relative w-full max-w-xl mx-auto">
@@ -71,43 +74,30 @@ function Body() {
                 if (filtered.length > 0) onSelect(filtered[0]);
               }}
             >
-              <svg
-                className="-ml-0.5 sm:-ml-1 mr-2 w-4 h-4 sm:h-5 sm:w-5 "
-                xmlns="http://www.w3.org/2000/svg"
-                fillRule="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+              <h1 className="mr-2"><FaSearchLocation/></h1>
               Search
             </button>
 
             {filtered.length > 0 && (
-              <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
+              <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
                 {filtered.map((dest) => (
                   <li
                     key={dest._id}
                     onClick={() => onSelect(dest)}
                     className="cursor-pointer px-4 py-2 hover:bg-green-100"
                   >
-                    {dest.name || dest.title}
+                    {dest.name || dest.title || dest.location}
                   </li>
                 ))}
               </ul>
             )}
           </div>
         </section>
-      </FadeInSection>
+      {/* </FadeInSection> */}
 
-      <FadeInSection>
+      {/* <FadeInSection> */}
         <Slider />
-      </FadeInSection>
+      {/* </FadeInSection> */}
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">

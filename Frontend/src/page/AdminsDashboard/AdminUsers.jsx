@@ -2,35 +2,53 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
 
+const API_BASE_URL =  'http://localhost:3000';
+
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
 
-const fetchUsers = async () => {
-  try {
-    const token = localStorage.getItem('token'); // Or however you're storing JWT
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
 
-    const res = await axios.get('http://localhost:3000/api/users/allusers', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const res = await axios.get(`${API_BASE_URL}/api/users/allusers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setUsers(res.data.user || []);
-  } catch (err) {
-    console.error(err);
-    setError('Failed to fetch users');
-  }
-};
-
+      const list = res.data?.users || res.data?.user || res.data?.data || [];
+      setUsers(Array.isArray(list) ? list : []);
+    } catch (err) {
+      console.error(err);
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        setError('Unauthorized. Please log in as an admin.');
+      } else {
+        setError(err?.response?.data?.message || 'Failed to fetch users');
+      }
+    }
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      await axios.delete(`http://localhost:3000/api/users/deleteuser/${id}`);
-      setUsers(users.filter(user => user._id !== id));
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Not authenticated');
+        return;
+      }
+      await axios.delete(`${API_BASE_URL}/api/users/deleteuser/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(prev => prev.filter(user => user._id !== id));
     } catch (err) {
-      alert('Failed to delete user');
+      console.error(err);
+      alert(err?.response?.data?.message || 'Failed to delete user');
     }
   };
 
@@ -75,7 +93,7 @@ const fetchUsers = async () => {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan="4" className="py-4 text-center text-gray-500">No users found</td>
+                <td colSpan="5" className="py-4 text-center text-gray-500">No users found</td>
               </tr>
             )}
           </tbody>

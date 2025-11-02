@@ -34,7 +34,7 @@ const ImageSlider = () => {
   
 
   return (
-    <section className="bg-gray-100 p-8 h-[70vh]">
+    <section className="bg-gray-100 p-8 h-[70vh] ">
       <div className="max-w-full mx-auto relative group h-[70vh]">
         {/* Slider Wrapper */}
         <div className="relative overflow-hidden rounded-lg shadow-xl ">
