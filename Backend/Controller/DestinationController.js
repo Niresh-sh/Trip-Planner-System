@@ -84,7 +84,7 @@ const CreateDestinationController = async (req, res) => {
 
 const getAllDestinationController = async (req, res) => {
   try {
-    const destinations = await destinationModel.find().populate("category");
+    const destinations = await destinationModel.find().populate("category", "name");
     res.status(200).json({
       success: true,
       destinations: destinations,

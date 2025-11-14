@@ -22,13 +22,33 @@ const AdminDestination = () => {
   });
   const [destinations, setDestinations] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/api/category/get-category"
+        );
+        const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.categories || [];
+         setCategories(data);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      setCategories([]); // fallback
+    }
+  };
+  fetchCategories();
+}, []);
   // Fetch all destinations
   const fetchDestinations = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/destination/get-destination');
+      const res = await axios.get(
+        "http://localhost:3000/api/destination/get-destination"
+      );
 
-        setDestinations(res.data.destinations);
+      setDestinations(res.data.destinations);
     } catch (error) {
       console.error("Failed to fetch destinations", error);
     }
@@ -65,7 +85,10 @@ const AdminDestination = () => {
   const addNearbyAttraction = () => {
     setForm((prev) => ({
       ...prev,
-      nearbyAttractions: [...prev.nearbyAttractions, { name: "", distance: "", rating: "" }],
+      nearbyAttractions: [
+        ...prev.nearbyAttractions,
+        { name: "", distance: "", rating: "" },
+      ],
     }));
   };
 
@@ -87,10 +110,7 @@ const AdminDestination = () => {
       longitude: parseFloat(form.longitude),
       rating: parseFloat(form.rating),
       cost: parseInt(form.cost, 10),
-      category: form.category
-        .split(",")
-        .map((c) => c.trim())
-        .filter(Boolean),
+      category: form.category,
       highlights: form.highlights
         .split(",")
         .map((h) => h.trim())
@@ -115,7 +135,10 @@ const AdminDestination = () => {
           payload
         );
       } else {
-        await axios.post("http://localhost:3000/api/destination/create-destination", payload);
+        await axios.post(
+          "http://localhost:3000/api/destination/create-destination",
+          payload
+        );
       }
       setForm({
         title: "",
@@ -153,7 +176,7 @@ const AdminDestination = () => {
       rating: dest.rating || "",
       duration: dest.duration || "",
       cost: dest.cost || "",
-      category: dest.category ? dest.category.join(",") : "",
+      category: dest.category?._id || dest.category || "",
       description: dest.description || "",
       highlights: dest.highlights ? dest.highlights.join(",") : "",
       elevation: dest.elevation || "",
@@ -172,7 +195,9 @@ const AdminDestination = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this destination?")) {
       try {
-        await axios.delete(`http://localhost:3000/api/destination/delete-destination/${id}`);
+        await axios.delete(
+          `http://localhost:3000/api/destination/delete-destination/${id}`
+        );
         fetchDestinations();
       } catch (error) {
         console.error("Error deleting destination", error);
@@ -185,7 +210,10 @@ const AdminDestination = () => {
       <h1 className="text-3xl font-bold mb-6 text-green-600">
         {editingId ? "Edit Destination" : "Add Destination"}
       </h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-green-50 p-6 rounded shadow-md">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-green-50 p-6 rounded shadow-md"
+      >
         {/* Basic info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
@@ -259,14 +287,36 @@ const AdminDestination = () => {
             onChange={handleChange}
             className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          <input
-            type="text"
-            name="category"
-            placeholder="Category IDs (comma separated)"
-            value={form.category}
-            onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+          <div>
+            <label className="block font-semibold text-green-700 mb-2">
+              Select Category
+            </label>
+            <div className="flex flex-wrap gap-4">
+              {categories.map((cat) => (
+                <label
+                  key={cat._id}
+                  className={`flex items-center gap-2 p-2 border rounded cursor-pointer transition ${
+                    form.category === cat._id
+                      ? "border-green-600 bg-green-100"
+                      : "border-green-300 hover:border-green-500"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="category"
+                    value={cat._id}
+                    checked={form.category === cat._id}
+                    onChange={(e) =>
+                      setForm({ ...form, category: e.target.value })
+                    }
+                    className="text-green-600 focus:ring-green-500"
+                  />
+                  <span className="text-gray-700">{cat.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <input
             type="text"
             name="elevation"
@@ -425,31 +475,31 @@ const AdminDestination = () => {
         Existing Destinations
       </h2>
       <ul>
-       {Array.isArray(destinations) && destinations.map((dest) => (
-
-          <li
-            key={dest._id}
-            className="mb-4 p-4 border border-green-300 rounded shadow-sm flex justify-between items-center"
-          >
-            <div>
-              <strong>{dest.title}</strong> - {dest.location}
-            </div>
-            <div>
-              <button
-                onClick={() => handleEdit(dest)}
-                className="mr-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(dest._id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
+        {Array.isArray(destinations) &&
+          destinations.map((dest) => (
+            <li
+              key={dest._id}
+              className="mb-4 p-4 border border-green-300 rounded shadow-sm flex justify-between items-center"
+            >
+              <div>
+                <strong>{dest.title}</strong> - {dest.location}
+              </div>
+              <div>
+                <button
+                  onClick={() => handleEdit(dest)}
+                  className="mr-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(dest._id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
       </ul>
     </div>
   );

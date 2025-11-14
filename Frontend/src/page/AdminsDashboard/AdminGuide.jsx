@@ -90,35 +90,36 @@ function AdminGuide() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-2">
       <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold text-teal-600 mb-4">
+        <h2 className="text-2xl font-semibold text-green-600 mb-4 border-b">
           Manage Guides
         </h2>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {error && <p className="text-red-500 mb-4 border-t">{error}</p>}
 
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-200">
-            <thead className="bg-gray-100">
+          <table className="min-w-full border border-gray-200 rounded-lg">
+            <thead className="bg-gray-300">
               <tr>
-                <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">Phone</th>
-                <th className="py-2 px-4 border-b">Languages</th>
-                <th className="py-2 px-4 border-b">Status</th>
-                <th className="py-2 px-4 border-b">Assigned Location</th>
+                <th className="py-2 px-4 ">Name</th>
+                <th className="py-2 px-4 ">Phone</th>
+                <th className="py-2 px-4 ">Languages</th>
+                <th className="py-2 px-4 ">Status</th>
+                <th className="py-2 px-4 ">Assigned Location</th>
+                <th className="py-2 px-4 ">Action</th>
               </tr>
             </thead>
             <tbody>
               {guides?.map((guide) => (
                 <tr key={guide._id} className="text-center">
-                  <td className="py-2 px-4 border-b">{guide.name}</td>
-                  <td className="py-2 px-4 border-b">{guide.phone}</td>
-                  <td className="py-2 px-4 border-b">
+                  <td className="py-2 px-4 border-t border-gray-300">{guide.name}</td>
+                  <td className="py-2 px-4 border-t border-gray-300">{guide.phone}</td>
+                  <td className="py-2 px-4 border-t border-gray-300">
                     {guide.languages.join(", ")}
                   </td>
-                  <td className="py-2 px-4 border-b">{guide.status}</td>
-                  <td className="py-2 px-4 border-b">
+                  <td className="py-2 px-4 border-t border-gray-300">{guide.status}</td>
+                  <td className="py-2 px-4 border-t border-gray-300">
                     {guide.status === "Occupied"
                       ?guide.assignedDestination?.location
                       : "—"}
@@ -145,11 +146,11 @@ function AdminGuide() {
       </div>
 
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4 border-t">
           Add New Guide
         </h3>
 
-        <form onSubmit={handleAddGuide} className="space-y-4">
+        <form onSubmit={handleAddGuide} className="space-y-4 border-t">
           <div>
             <input
               type="text"
@@ -158,7 +159,7 @@ function AdminGuide() {
               value={form.name}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full px-4 border-t py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
             />
           </div>
           <div>
@@ -169,7 +170,7 @@ function AdminGuide() {
               value={form.phone}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
+              className="w-full px-4 border-t py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
           </div>
           <div>
@@ -180,14 +181,14 @@ function AdminGuide() {
               value={form.languages}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
+              className="w-full px-4 border-t py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
           </div>
           <div>
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 px-4 text-white font-semibold rounded-md ${
+              className={`w-full py-2 px-4 border-t text-white font-semibold rounded-md ${
                 loading ? "bg-teal-300" : "bg-green-500 hover:bg-gray-600"
               }`}
             >

@@ -4,14 +4,13 @@ import {
   FaTachometerAlt,
   FaUsers,
   FaChartBar,
-  FaShoppingCart,
   FaBoxOpen,
   FaCog,
 } from "react-icons/fa";
 
-
 function Sidebar() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     // Clear all auth info
     localStorage.clear(); // removes token, role, user info etc.
@@ -19,6 +18,7 @@ const navigate = useNavigate();
     // Redirect to home or login page
     navigate("/", { replace: true });
   };
+
   return (
     <>
       {/* Sidebar */}
@@ -28,8 +28,9 @@ const navigate = useNavigate();
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
+          {/* Dashboard */}
           <Link
-            to="admin" relative="path"
+            to="/admin/admindashboard"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <span className="mr-3">
@@ -38,16 +39,18 @@ const navigate = useNavigate();
             Dashboard
           </Link>
 
+          {/* Users */}
           <Link
-            to="AdminUsers"
+            to="/admin/admindashboard/adminusers"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <FaUsers className="mr-3" />
             Users
           </Link>
 
+          {/* Analytics */}
           <Link
-            to="/analytics"
+            to="/admin/admindashboard/analytics"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <span className="mr-3">
@@ -56,8 +59,9 @@ const navigate = useNavigate();
             Analytics
           </Link>
 
+          {/* Category */}
           <Link
-            to="AddCategory"
+            to="/admin/admindashboard/addcategory"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <span className="mr-3">
@@ -66,8 +70,9 @@ const navigate = useNavigate();
             Category
           </Link>
 
+          {/* Destinations */}
           <Link
-            to="AdminDestination"
+            to="/admin/admindashboard/admindestination"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <span className="mr-3">
@@ -76,8 +81,9 @@ const navigate = useNavigate();
             Destinations
           </Link>
 
+          {/* Guides */}
           <Link
-            to="AdminGuide"
+            to="/admin/admindashboard/adminguide"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
             <span className="mr-3">
@@ -85,15 +91,14 @@ const navigate = useNavigate();
             </span>
             Guides
           </Link>
-          
         </nav>
 
         <button
-        onClick={handleLogout}
-        className="m-4 p-2 bg-red-600 hover:bg-red-700 rounded"
-      >
-        Logout
-      </button>
+          onClick={handleLogout}
+          className="m-4 p-2 bg-red-600 hover:bg-red-700 rounded"
+        >
+          Logout
+        </button>
       </aside>
     </>
   );

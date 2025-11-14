@@ -49,6 +49,11 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'approved', 'Declined', 'success'],
     default: 'pending',
+  },
+
+  // Added: timestamp when booking was completed / marked success
+  completedAt: {
+    type: Date,
   }
 }, { timestamps: true });
 

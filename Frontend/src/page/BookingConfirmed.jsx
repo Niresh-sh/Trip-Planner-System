@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function BookingConfirmed() {
   const { bookingId } = useParams();
@@ -8,26 +8,37 @@ function BookingConfirmed() {
 
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     axios
       .get(`http://localhost:3000/api/booking/userbooking/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        setBooking(res.data);
-      })
-      .catch(() => {
-        setError('Failed to load booking details.');
-      })
+      .then((res) => setBooking(res.data))
+      .catch(() => setError("Failed to load booking details."))
       .finally(() => setLoading(false));
   }, [bookingId]);
 
-  if (loading) return <p>Loading booking details...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
-  if (!booking) return <p>No booking found.</p>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
+        Loading booking details...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 text-lg">
+        {error}
+      </div>
+    );
+  if (!booking)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
+        No booking found.
+      </div>
+    );
 
   const {
     persons,
@@ -42,83 +53,182 @@ function BookingConfirmed() {
 
   const statusFormatted = status
     ? status.charAt(0).toUpperCase() + status.slice(1)
-    : 'Pending';
+    : "Pending";
+
+  const cover =
+    destinationId?.image || "/public/placeholder-destination.jpg";
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow rounded-md p-6 mt-8 border">
-      <h1 className="text-2xl font-bold text-green-600 text-center mb-6">Trip Summary</h1>
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg overflow-hidden border border-emerald-100">
+        {/* Header Image */}
+        <div className="relative">
+          <img
+            src={cover}
+            alt={destinationId?.title || "Destination"}
+            className="w-full h-60 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-6">
+            <h1 className="text-3xl font-bold text-white">
+              {destinationId?.title || "Trip Summary"}
+            </h1>
+            <p className="text-white/90 text-sm">
+              {destinationId?.location || "Unknown Location"}
+            </p>
+          </div>
+        </div>
 
-      {/* Trip Details */}
-      <div className="flex justify-between mb-4">
-        <div>
-          <h2 className="font-semibold">Trip Details</h2>
-          <p><strong>Start Date:</strong> {startDate ? new Date(startDate).toLocaleDateString() : 'N/A'}</p>
-          <p><strong>Persons:</strong> {persons}</p>
-          <p><strong>Guide Included:</strong> {guideIncluded ? 'Yes' : 'No'}</p>
-          {guideIncluded && guide?.fee && (
-            <p><strong>Guide Fee:</strong> ₹{guide.fee}</p>
+        {/* Content */}
+        <div className="p-6 md:p-10 space-y-8">
+          {/* Trip & Contact Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Trip Details */}
+            <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <h3 className="font-semibold text-gray-800 mb-3">
+                Trip Details
+              </h3>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="text-gray-500">Start Date:</span>{" "}
+                  <span className="font-medium">
+                    {startDate
+                      ? new Date(startDate).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Persons:</span>{" "}
+                  <span className="font-medium">{persons}</span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Guide Included:</span>{" "}
+                  <span className="font-medium">
+                    {guideIncluded ? "Yes" : "No"}
+                  </span>
+                </p>
+                {guideIncluded && guide?.fee && (
+                  <p>
+                    <span className="text-gray-500">Guide Fee:</span>{" "}
+                    <span className="font-medium">₹{guide.fee}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Contact Info */}
+            <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <h3 className="font-semibold text-gray-800 mb-3">
+                Contact Information
+              </h3>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="text-gray-500">Name:</span>{" "}
+                  <span className="font-medium">{contact?.name || "N/A"}</span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Email:</span>{" "}
+                  <span className="font-medium">{contact?.email || "N/A"}</span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Phone:</span>{" "}
+                  <span className="font-medium">{contact?.phone || "N/A"}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Destination Cost Info */}
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-5 shadow-sm">
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Destination Summary
+            </h3>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-600">
+                  Duration: {destinationId?.duration || "3–4 hours"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Base Cost: ₹{destinationId?.cost || "N/A"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Latitude: {destinationId?.latitude || "N/A"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Longitude: {destinationId?.longitude || "N/A"}
+                </p>
+                
+              </div>
+              
+              <p className="text-emerald-700 font-bold text-xl">
+                ₹{totalCost - (guide?.fee || 0)}
+              </p>
+            </div>
+          </div>
+
+          {/* Guide Details */}
+          {guideIncluded && guide && (
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <h3 className="font-semibold text-gray-800 mb-3">
+                Guide Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <p>
+                  <span className="text-gray-500">Name:</span>{" "}
+                  <span className="font-medium">{guide.name}</span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Phone:</span>{" "}
+                  <span className="font-medium">{guide.phone}</span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Languages:</span>{" "}
+                  <span className="font-medium">
+                    {guide.languages?.join(", ") || "N/A"}
+                  </span>
+                </p>
+                <p>
+                  <span className="text-gray-500">Location:</span>{" "}
+                  <span className="font-medium">
+                    {guide.assignedDestination?.location || "N/A"}
+                  </span>
+                </p>
+              </div>
+            </div>
           )}
+
+          {/* Total Cost + Status */}
+          <div className="flex flex-col sm:flex-row justify-between items-center bg-white border rounded-xl p-5 shadow-sm">
+            <div className="text-gray-700 font-semibold">
+              Estimated Total Cost:{" "}
+              <span className="text-emerald-700 font-bold text-lg">
+                ₹{totalCost}
+              </span>
+            </div>
+            <div className="mt-3 sm:mt-0">
+              <span
+                className={`font-semibold ${
+                  statusFormatted === "Approved"
+                    ? "text-emerald-600"
+                    : statusFormatted === "Declined"
+                    ? "text-red-600"
+                    : "text-yellow-600"
+                }`}
+              >
+                Status: {statusFormatted}
+              </span>
+            </div>
+          </div>
+
+          {/* Back Button */}
+          <div className="text-center mt-6">
+            <button
+              onClick={() => navigate("/")}
+              className="px-6 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold shadow hover:from-emerald-500 hover:to-teal-500 transition-all duration-200"
+            >
+              Back to Home
+            </button>
+          </div>
         </div>
-
-        <div>
-          <h2 className="font-semibold">Contact Information</h2>
-          <p><strong>Name:</strong> {contact?.name || 'N/A'}</p>
-          <p><strong>Email:</strong> {contact?.email || 'N/A'}</p>
-          <p><strong>Phone:</strong> {contact?.phone || 'N/A'}</p>
-        </div>
-      </div>
-
-      {/* Destination Section */}
-      <div className="bg-gray-100 p-4 rounded mb-4">
-        <h2 className="font-semibold text-lg mb-2">{destinationId?.title || 'N/A'}</h2>
-        <p className="text-gray-700">{destinationId?.location || 'N/A'}</p>
-        <p className="text-sm text-gray-500 mt-1">Duration: 3–4 hours</p>
-        <p className="text-green-600 font-semibold text-right mt-2">₹{totalCost - (guide?.fee || 0)}</p>
-      </div>
-
-      {/* Guide Details */}
-      {guideIncluded && guide && (
-        <div className="mb-4">
-          <h2 className="font-semibold mt-2">Guide Details</h2>
-          <p><strong>Name:</strong> {guide.name}</p>
-          <p><strong>Phone:</strong> {guide.phone}</p>
-          <p><strong>Languages:</strong> {guide.languages?.join(', ') || 'N/A'}</p>
-          <p><strong>Location:</strong> {guide.destinationId?.location || 'N/A'}</p>
-        </div>
-      )}
-
-      {/* Total Cost */}
-      <div className="bg-gray-100 p-4 rounded mt-4">
-        <h2 className="text-lg font-semibold">Estimated Total Cost:</h2>
-        <p className="text-green-600 text-xl font-bold">₹{totalCost}</p>
-      </div>
-
-      {/* Status */}
-      <div className="mt-4">
-        <p>
-          <strong>Status:</strong>{' '}
-          <span
-            className={`font-semibold ${
-              statusFormatted === 'Approved'
-                ? 'text-green-600'
-                : statusFormatted === 'Declined'
-                ? 'text-red-600'
-                : 'text-yellow-600'
-            }`}
-          >
-            {statusFormatted}
-          </span>
-        </p>
-      </div>
-
-      {/* Button */}
-      <div className="text-center mt-6">
-        <button
-          onClick={() => navigate('/')}
-          className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Back to Home
-        </button>
       </div>
     </div>
   );

@@ -134,11 +134,16 @@ const getUserBookings = async (req, res) => {
     const userId = req.user._id;
 
     const bookings = await BookingModel.find({ userId })
-      .populate("destinationId", "title")
+      .populate("destinationId", "title location image latitude longitude cost duration")
       .populate("tripId")
       .populate("guide")
-      .sort({ createdAt: -1 });
-
+      .populate({
+  path: "destinationId",
+  populate: {
+    path: "category",
+    select: "name",
+  },
+});
     res.json(bookings);
   } catch (error) {
     console.error("Fetch bookings error:", error);
@@ -150,8 +155,21 @@ const getBookingById = async (req, res) => {
   try {
     const booking = await BookingModel.findById(req.params.bookingId)
       .populate("tripId")
-      .populate("guide")
-      .populate("destinationId", "title");
+      .populate({
+    path: "guide",
+    populate: {
+      path: "assignedDestination", // 👈 must match the Guide schema field
+      select: "title location latitude longitude",
+    },
+  })
+      .populate("destinationId", "title location image latitude longitude cost duration")
+      .populate({
+        path: "destinationId",
+        populate: {
+          path: "category",
+          select: "name",
+        },
+      });
     if (!booking) return res.status(404).json({ message: "Booking not found" });
     res.json(booking);
   } catch (error) {
@@ -166,8 +184,7 @@ const getAllBookings = async (req, res) => {
       .populate("userId", "firstName email")
       .populate("tripId")
       .populate("guide")
-      .populate("destinationId", "title")
-      .sort({ createdAt: -1 });
+      .populate("destinationId", "title location")
 
     res.json(bookings);
   } catch (error) {
@@ -179,7 +196,7 @@ const getAllBookings = async (req, res) => {
 // APPROVE BOOKING
 const approveBooking = async (req, res) => {
   try {
-    const booking = await BookingModel.findById(req.params.id).populate("destinationId", "title");
+    const booking = await BookingModel.findById(req.params.id).populate("destinationId", "title location");
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
     booking.status = "approved"; // enum requires lowercase
@@ -202,7 +219,7 @@ const approveBooking = async (req, res) => {
 // DECLINE BOOKING
 const declineBooking = async (req, res) => {
   try {
-    const booking = await BookingModel.findById(req.params.id).populate("destinationId", "title");
+    const booking = await BookingModel.findById(req.params.id).populate("destinationId", "title location");
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
     booking.status = "Declined"; // enum uses capital D

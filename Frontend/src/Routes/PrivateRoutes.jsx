@@ -9,7 +9,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
   // If not authenticated, redirect to login page
   if (!isAuthenticated) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // If user role doesn't match allowedRoles, redirect to the home page or other fallback
