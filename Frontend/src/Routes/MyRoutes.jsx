@@ -43,9 +43,10 @@ function MyRoutes() {
           <Route path="/tripsummary/:tripId" element={<TripSummaryPage />} />
           <Route path="plantrip" element={<PlanTrip />} />
           <Route path="/destination/:id" element={<SingleDestination />} />
-         <Route path="/booking-success/:bookingId" element={<BookingConfirmed />} />
-
-
+          <Route
+            path="/booking-success/:bookingId"
+            element={<BookingConfirmed />}
+          />
 
           {/* User Dashboard Routes (protected) */}
           <Route element={<PrivateRoute />}>
@@ -53,7 +54,7 @@ function MyRoutes() {
               <Route path="userdetails" element={<UserDetails />} />
               <Route path="changepassword" element={<UserProfile />} />
               <Route path="updateprofile" element={<ChangeProfile />} />
-               <Route path="bookinghistory" element={<BookingHistory />} />
+              <Route path="bookinghistory" element={<BookingHistory />} />
             </Route>
           </Route>
 

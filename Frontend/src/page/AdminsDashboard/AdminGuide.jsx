@@ -98,7 +98,7 @@ function AdminGuide() {
 
         {error && <p className="text-red-500 mb-4 border-t">{error}</p>}
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-80">
           <table className="min-w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-300">
               <tr>
