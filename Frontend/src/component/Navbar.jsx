@@ -90,37 +90,50 @@ function Navbar({ openLoginModal }) {
                       className="flex items-center text-sm bg-gray-800 rounded-full focus:ring-2 focus:ring-gray-300 "
                     >
                       <img
-                        className="w-8 h-8 rounded-full"
-                        src="https://cdn-icons-png.flaticon.com/128/12123/12123009.png"
+                        className="w-9 h-9 rounded-full"
+                        src="https://cdn-icons-png.flaticon.com/512/4140/4140039.png"
                         alt="User Avatar"
                       />
                     </button>
 
                     {/* User Dropdown */}
                     {dropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-[100] overflow: visible">
-                        <div className="p-3 border-b ">
-                          <p className="text-sm font-medium text-gray-800">
-                            {email}
-                          </p>
-                        </div>
-                        <ul className="py-2">
-                          <li>
-                            <NavLink to="/dashboard/userdetails" className="dropdown-link">
-                              Dashboard
-                            </NavLink>
-                          </li>
-                        </ul>
-                        <div className="py-2">
-                          <button
-                            onClick={handleLogout}
-                            className="block w-full text-left dropdown-link text-green-500"
-                          >
-                            Logout
-                          </button>
-                        </div>
-                      </div>
-                    )}
+  <div className="absolute right-0 mt-2 w-56 bg-gray-300 rounded-xl shadow-xl 
+                  z-[100] overflow-hidden transition-all duration-200 text-white">
+
+    {/* Email */}
+    <div className="p-3 border-b border-green-100 bg-green-700">
+      <p className="text-sm font-semibold truncate w-full">
+        {email}
+      </p>
+    </div>
+
+    {/* Dashboard */}
+    <ul className="py-2">
+      <li>
+        <NavLink
+          to="/dashboard/userdetails"
+          className="dropdown-link block px-4 py-2 hover:bg-green-500 
+                     transition rounded-md text-green-900 font-semibold"
+        >
+          Dashboard
+        </NavLink>
+      </li>
+    </ul>
+
+    {/* Logout */}
+    <div className="py-2">
+      <button
+        onClick={handleLogout}
+        className="block w-full text-left dropdown-link px-4 py-2 
+                   text-green-900 font-semibold hover:bg-green-500 transition rounded-md"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+)}
+
                   </div>
                 ) : (
                   <div className="hidden md:flex space-x-4">

@@ -31,23 +31,22 @@ const AdminDestination = () => {
           "http://localhost:3000/api/category/get-category"
         );
         const data = Array.isArray(res.data)
-        ? res.data
-        : res.data.categories || [];
-         setCategories(data);
-    } catch (error) {
-      console.error("Failed to fetch categories", error);
-      setCategories([]); // fallback
-    }
-  };
-  fetchCategories();
-}, []);
-  // Fetch all destinations
+          ? res.data
+          : res.data.categories || [];
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const fetchDestinations = async () => {
     try {
       const res = await axios.get(
         "http://localhost:3000/api/destination/get-destination"
       );
-
       setDestinations(res.data.destinations);
     } catch (error) {
       console.error("Failed to fetch destinations", error);
@@ -58,10 +57,8 @@ const AdminDestination = () => {
     fetchDestinations();
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Special handling for bestTime nested fields
     if (name.startsWith("bestTime.")) {
       const key = name.split(".")[1];
       setForm((prev) => ({
@@ -73,7 +70,6 @@ const AdminDestination = () => {
     }
   };
 
-  // Handle nearbyAttractions changes
   const handleNearbyChange = (index, e) => {
     const { name, value } = e.target;
     const newNearby = [...form.nearbyAttractions];
@@ -81,7 +77,6 @@ const AdminDestination = () => {
     setForm((prev) => ({ ...prev, nearbyAttractions: newNearby }));
   };
 
-  // Add new nearbyAttraction input set
   const addNearbyAttraction = () => {
     setForm((prev) => ({
       ...prev,
@@ -92,18 +87,14 @@ const AdminDestination = () => {
     }));
   };
 
-  // Remove nearbyAttraction input set
   const removeNearbyAttraction = (index) => {
     const newNearby = [...form.nearbyAttractions];
     newNearby.splice(index, 1);
     setForm((prev) => ({ ...prev, nearbyAttractions: newNearby }));
   };
 
-  // Submit form (Add or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Prepare data
     const payload = {
       ...form,
       latitude: parseFloat(form.latitude),
@@ -131,7 +122,7 @@ const AdminDestination = () => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:3000/api/destination/update-destination/${id}`,
+          `http://localhost:3000/api/destination/update-destination/${editingId}`,
           payload
         );
       } else {
@@ -165,7 +156,6 @@ const AdminDestination = () => {
     }
   };
 
-  // Edit existing destination
   const handleEdit = (dest) => {
     setEditingId(dest._id);
     setForm({
@@ -191,7 +181,6 @@ const AdminDestination = () => {
     });
   };
 
-  // Delete destination
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this destination?")) {
       try {
@@ -206,23 +195,23 @@ const AdminDestination = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-green-600">
+    <div className="max-w-6xl mx-auto p-6">
+      <h1 className="text-3xl font-extrabold mb-6 text-green-700">
         {editingId ? "Edit Destination" : "Add Destination"}
       </h1>
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-green-50 p-6 rounded shadow-md"
+        className="space-y-6 bg-white p-6 rounded-xl shadow-lg"
       >
-        {/* Basic info */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Responsive 2-column layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <input
             type="text"
             name="title"
             placeholder="Title"
             value={form.title}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
           />
           <input
@@ -231,7 +220,7 @@ const AdminDestination = () => {
             placeholder="Location"
             value={form.location}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
           />
           <input
@@ -241,12 +230,9 @@ const AdminDestination = () => {
             value={form.latitude}
             onChange={handleChange}
             step="any"
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
             type="number"
             name="longitude"
@@ -254,7 +240,7 @@ const AdminDestination = () => {
             value={form.longitude}
             onChange={handleChange}
             step="any"
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             required
           />
           <input
@@ -266,7 +252,7 @@ const AdminDestination = () => {
             step="0.1"
             min="0"
             max="5"
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           <input
             type="text"
@@ -274,137 +260,134 @@ const AdminDestination = () => {
             placeholder="Duration (e.g., 3-4 hours)"
             value={form.duration}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
             type="number"
             name="cost"
             placeholder="Cost"
             value={form.cost}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          <div>
-            <label className="block font-semibold text-green-700 mb-2">
-              Select Category
-            </label>
-            <div className="flex flex-wrap gap-4">
-              {categories.map((cat) => (
-                <label
-                  key={cat._id}
-                  className={`flex items-center gap-2 p-2 border rounded cursor-pointer transition ${
-                    form.category === cat._id
-                      ? "border-green-600 bg-green-100"
-                      : "border-green-300 hover:border-green-500"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="category"
-                    value={cat._id}
-                    checked={form.category === cat._id}
-                    onChange={(e) =>
-                      setForm({ ...form, category: e.target.value })
-                    }
-                    className="text-green-600 focus:ring-green-500"
-                  />
-                  <span className="text-gray-700">{cat.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
           <input
             type="text"
             name="elevation"
             placeholder="Elevation"
             value={form.elevation}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
-        {/* Description */}
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          rows={3}
-          className="w-full p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-          required
-        />
-
-        {/* Highlights */}
-        <textarea
-          name="highlights"
-          placeholder="Highlights (comma separated)"
-          value={form.highlights}
-          onChange={handleChange}
-          rows={2}
-          className="w-full p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-
-        {/* Best Time */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input
-            type="text"
-            name="bestTime.OctDec"
-            placeholder="Best Time Oct-Dec"
-            value={form.bestTime.OctDec}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={form.description}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            rows={3}
+            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
-          <input
-            type="text"
-            name="bestTime.MarMay"
-            placeholder="Best Time Mar-May"
-            value={form.bestTime.MarMay}
+          <textarea
+            name="highlights"
+            placeholder="Highlights (comma separated)"
+            value={form.highlights}
             onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <input
-            type="text"
-            name="bestTime.JunSep"
-            placeholder="Best Time Jun-Sep"
-            value={form.bestTime.JunSep}
-            onChange={handleChange}
-            className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            rows={3}
+            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
-        {/* Image URL */}
-        <input
-          type="text"
-          name="image"
-          placeholder="Image URL"
-          value={form.image}
-          onChange={handleChange}
-          className="w-full p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
+        {/* Category */}
+        <div>
+          <label className="block font-semibold text-green-700 mb-2">
+            Select Category
+          </label>
+          <div className="flex flex-wrap gap-3">
+            {categories.map((cat) => (
+              <label
+                key={cat._id}
+                className={`flex items-center gap-2 p-2 border rounded-lg cursor-pointer transition ${
+                  form.category === cat._id
+                    ? "border-green-600 bg-green-100"
+                    : "border-gray-300 hover:border-green-500"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="category"
+                  value={cat._id}
+                  checked={form.category === cat._id}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value })
+                  }
+                  className="text-green-600 focus:ring-green-500"
+                />
+                <span className="text-gray-700">{cat.name}</span>
+              </label>
+            ))}
+          </div>
+        </div>
 
-        {/* Included */}
-        <textarea
-          name="included"
-          placeholder="Included items (comma separated)"
-          value={form.included}
-          onChange={handleChange}
-          rows={2}
-          className="w-full p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
+        {/* Best Time & Image */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            <input
+              type="text"
+              name="bestTime.OctDec"
+              placeholder="Best Time Oct-Dec"
+              value={form.bestTime.OctDec}
+              onChange={handleChange}
+              className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <input
+              type="text"
+              name="bestTime.MarMay"
+              placeholder="Best Time Mar-May"
+              value={form.bestTime.MarMay}
+              onChange={handleChange}
+              className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <input
+              type="text"
+              name="bestTime.JunSep"
+              placeholder="Best Time Jun-Sep"
+              value={form.bestTime.JunSep}
+              onChange={handleChange}
+              className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <input
+            type="text"
+            name="image"
+            placeholder="Image URL"
+            value={form.image}
+            onChange={handleChange}
+            className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
 
-        {/* Not Included */}
-        <textarea
-          name="notIncluded"
-          placeholder="Not Included items (comma separated)"
-          value={form.notIncluded}
-          onChange={handleChange}
-          rows={2}
-          className="w-full p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
+        {/* Included & Not Included */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <textarea
+            name="included"
+            placeholder="Included items (comma separated)"
+            value={form.included}
+            onChange={handleChange}
+            rows={2}
+            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <textarea
+            name="notIncluded"
+            placeholder="Not Included items (comma separated)"
+            value={form.notIncluded}
+            onChange={handleChange}
+            rows={2}
+            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
 
         {/* Nearby Attractions */}
         <div>
@@ -412,14 +395,14 @@ const AdminDestination = () => {
             Nearby Attractions
           </label>
           {form.nearbyAttractions.map((attr, idx) => (
-            <div key={idx} className="grid grid-cols-4 gap-4 mb-2">
+            <div key={idx} className="grid grid-cols-4 gap-4 mb-2 items-center">
               <input
                 type="text"
                 name="name"
                 placeholder="Name"
                 value={attr.name}
                 onChange={(e) => handleNearbyChange(idx, e)}
-                className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
               <input
@@ -428,7 +411,7 @@ const AdminDestination = () => {
                 placeholder="Distance"
                 value={attr.distance}
                 onChange={(e) => handleNearbyChange(idx, e)}
-                className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
               <input
@@ -440,13 +423,13 @@ const AdminDestination = () => {
                 step="0.1"
                 min="0"
                 max="5"
-                className="p-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
               <button
                 type="button"
                 onClick={() => removeNearbyAttraction(idx)}
-                className="text-red-600 hover:text-red-800 font-bold"
+                className="text-gray-600 hover:text-gray-800 font-bold text-xl"
               >
                 &times;
               </button>
@@ -455,52 +438,53 @@ const AdminDestination = () => {
           <button
             type="button"
             onClick={addNearbyAttraction}
-            className="mt-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+            className="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
           >
             Add Nearby Attraction
           </button>
         </div>
 
-        {/* Submit button */}
         <button
           type="submit"
-          className="mt-6 w-full bg-green-600 text-white font-semibold py-3 rounded hover:bg-green-700 transition"
+          className="mt-6 w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition"
         >
           {editingId ? "Update Destination" : "Add Destination"}
         </button>
       </form>
 
-      {/* Destination List */}
-      <h2 className="text-2xl font-bold mt-10 mb-4 text-green-600">
+      {/* Scrollable Existing Destinations */}
+      <h2 className="text-2xl font-bold mt-10 mb-4 text-green-700">
         Existing Destinations
       </h2>
-      <ul>
-        {Array.isArray(destinations) &&
-          destinations.map((dest) => (
-            <li
-              key={dest._id}
-              className="mb-4 p-4 border border-green-300 rounded shadow-sm flex justify-between items-center"
-            >
-              <div>
-                <strong>{dest.title}</strong> - {dest.location}
-              </div>
-              <div>
-                <button
-                  onClick={() => handleEdit(dest)}
-                  className="mr-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(dest._id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-      </ul>
+      <div className="max-h-96 overflow-y-auto">
+        <ul className="space-y-3">
+          {Array.isArray(destinations) &&
+            destinations.map((dest) => (
+              <li
+                key={dest._id}
+                className="p-4 border border-gray-300 rounded-xl shadow-sm flex justify-between items-center bg-gray-50"
+              >
+                <div>
+                  <strong>{dest.title}</strong> - {dest.location}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(dest)}
+                    className="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(dest._id)}
+                    className="px-3 py-1 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 };

@@ -1,23 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify"; // ensure toast is imported
 
 function BookingConfirmed() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
+  console.log("bookingId:", bookingId);
 
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!bookingId) {
+      toast.error("Booking ID is missing from URL.");
+      setError("Booking ID is missing.");
+      setLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem("token");
     axios
       .get(`http://localhost:3000/api/booking/userbooking/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setBooking(res.data))
-      .catch(() => setError("Failed to load booking details."))
+      .then((res) => {
+        // assume API returns { booking: {...} }
+        setBooking(res.data.booking || res.data); 
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load booking details.");
+        toast.error("Failed to load booking details.");
+      })
       .finally(() => setLoading(false));
   }, [bookingId]);
 
@@ -55,8 +71,36 @@ function BookingConfirmed() {
     ? status.charAt(0).toUpperCase() + status.slice(1)
     : "Pending";
 
-  const cover =
-    destinationId?.image || "/public/placeholder-destination.jpg";
+  const cover = destinationId?.image || "/public/placeholder-destination.jpg";
+
+  const handleCancelBooking = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.warning("You must be logged in to cancel a booking.");
+      return;
+    }
+
+    if (booking.status === "declined") {
+      toast.info("This booking is already declined and cannot be canceled.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/booking/cancel/${bookingId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success(response.data.message || "Booking canceled successfully.");
+      navigate("/my-bookings");
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error?.response?.data?.message || "Failed to cancel the booking."
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 py-10 px-4">
@@ -84,16 +128,12 @@ function BookingConfirmed() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Trip Details */}
             <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
-              <h3 className="font-semibold text-gray-800 mb-3">
-                Trip Details
-              </h3>
+              <h3 className="font-semibold text-gray-800 mb-3">Trip Details</h3>
               <div className="space-y-2 text-sm">
                 <p>
                   <span className="text-gray-500">Start Date:</span>{" "}
                   <span className="font-medium">
-                    {startDate
-                      ? new Date(startDate).toLocaleDateString()
-                      : "N/A"}
+                    {startDate ? new Date(startDate).toLocaleDateString() : "N/A"}
                   </span>
                 </p>
                 <p>
@@ -102,9 +142,7 @@ function BookingConfirmed() {
                 </p>
                 <p>
                   <span className="text-gray-500">Guide Included:</span>{" "}
-                  <span className="font-medium">
-                    {guideIncluded ? "Yes" : "No"}
-                  </span>
+                  <span className="font-medium">{guideIncluded ? "Yes" : "No"}</span>
                 </p>
                 {guideIncluded && guide?.fee && (
                   <p>
@@ -156,9 +194,8 @@ function BookingConfirmed() {
                 <p className="text-sm text-gray-600">
                   Longitude: {destinationId?.longitude || "N/A"}
                 </p>
-                
               </div>
-              
+
               <p className="text-emerald-700 font-bold text-xl">
                 ₹{totalCost - (guide?.fee || 0)}
               </p>
@@ -168,9 +205,7 @@ function BookingConfirmed() {
           {/* Guide Details */}
           {guideIncluded && guide && (
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
-              <h3 className="font-semibold text-gray-800 mb-3">
-                Guide Details
-              </h3>
+              <h3 className="font-semibold text-gray-800 mb-3">Guide Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <p>
                   <span className="text-gray-500">Name:</span>{" "}
@@ -200,16 +235,14 @@ function BookingConfirmed() {
           <div className="flex flex-col sm:flex-row justify-between items-center bg-white border rounded-xl p-5 shadow-sm">
             <div className="text-gray-700 font-semibold">
               Estimated Total Cost:{" "}
-              <span className="text-emerald-700 font-bold text-lg">
-                ₹{totalCost}
-              </span>
+              <span className="text-emerald-700 font-bold text-lg">₹{totalCost}</span>
             </div>
             <div className="mt-3 sm:mt-0">
               <span
                 className={`font-semibold ${
                   statusFormatted === "Approved"
                     ? "text-emerald-600"
-                    : statusFormatted === "Declined"
+                    : statusFormatted === "declined"
                     ? "text-red-600"
                     : "text-yellow-600"
                 }`}
@@ -226,6 +259,16 @@ function BookingConfirmed() {
               className="px-6 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold shadow hover:from-emerald-500 hover:to-teal-500 transition-all duration-200"
             >
               Back to Home
+            </button>
+          </div>
+
+          {/* Cancel Booking */}
+          <div className="text-center mt-4">
+            <button
+              onClick={handleCancelBooking}
+              className="px-6 py-2 bg-red-600 text-white rounded-xl font-semibold shadow hover:bg-red-500 transition-all duration-200"
+            >
+              Cancel Booking
             </button>
           </div>
         </div>

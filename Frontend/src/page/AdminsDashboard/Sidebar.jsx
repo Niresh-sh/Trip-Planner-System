@@ -49,7 +49,7 @@ function Sidebar() {
           </Link>
 
           {/* Analytics */}
-          <Link
+          {/* <Link
             to="/admin/admindashboard/analytics"
             className="flex items-center px-4 py-2 rounded bg-green-700 hover:bg-green-600 transition"
           >
@@ -57,7 +57,7 @@ function Sidebar() {
               <FaChartBar />
             </span>
             Analytics
-          </Link>
+          </Link> */}
 
           {/* Category */}
           <Link

@@ -38,10 +38,19 @@ const AuthModal = ({ isOpen, onClose }) => {
     try {
       const response = await axios.post(`${backendURL}/api/users/login`, { email, password });
       const user = response.data;
+      console.log("login response:", user);
+      
+      const id =
+        user.id ||
+        user._id ||
+        user.userId ||
+        user?.user?._id ||
+        user?.user?.id ||
+        user?.user?.userId;
 
       if (user && user.email === email) {
         localStorage.setItem("token", user.token);
-        localStorage.setItem("id", user._id);
+        localStorage.setItem("id", id || localStorage.getItem("id") || localStorage.getItem("userId"));
         localStorage.setItem("email", user.email);
         localStorage.setItem("firstName", user.firstName);
         localStorage.setItem("lastName", user.lastName);

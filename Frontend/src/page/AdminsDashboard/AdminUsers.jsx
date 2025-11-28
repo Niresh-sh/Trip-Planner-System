@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
 
-const API_BASE_URL =  'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:3000';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -17,9 +17,7 @@ const AdminUsers = () => {
       }
 
       const res = await axios.get(`${API_BASE_URL}/api/users/allusers`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const list = res.data?.users || res.data?.user || res.data?.data || [];
@@ -57,47 +55,52 @@ const AdminUsers = () => {
   }, []);
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4">Manage Users</h2>
+    <div className="max-w-6xl mx-auto p-4 space-y-6">
+      <h2 className="text-2xl font-bold text-green-600">Manage Users</h2>
 
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded shadow text-sm">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="py-2 px-4">First Name</th>
-              <th className="py-2 px-4">Last Name</th>
-              <th className="py-2 px-4">Email</th>
-              <th className="py-2 px-4">Role</th>
-              <th className="py-2 px-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user._id} className="border-t hover:bg-gray-50">
-                <td className="py-2 px-4">{user.firstName}</td>
-                <td className="py-2 px-4">{user.lastName}</td>
-                <td className="py-2 px-4">{user.email}</td>
-                <td className="py-2 px-4 capitalize">{user.role}</td>
-                <td className="py-2 px-4">
-                  <button
-                    onClick={() => handleDelete(user._id)}
-                    className="text-red-500 hover:text-red-700"
-                    title="Delete User"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {users.length === 0 && (
+      <div className="bg-white shadow rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan="5" className="py-4 text-center text-gray-500">No users found</td>
+                <th className="py-3 px-4 text-left font-medium text-gray-700">First Name</th>
+                <th className="py-3 px-4 text-left font-medium text-gray-700">Last Name</th>
+                <th className="py-3 px-4 text-left font-medium text-gray-700">Email</th>
+                <th className="py-3 px-4 text-left font-medium text-gray-700">Role</th>
+                <th className="py-3 px-4 text-left font-medium text-gray-700">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="py-4 text-center text-gray-500">
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                users.map(user => (
+                  <tr key={user._id} className="hover:bg-gray-50 transition">
+                    <td className="py-2 px-4">{user.firstName}</td>
+                    <td className="py-2 px-4">{user.lastName}</td>
+                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4 capitalize">{user.role}</td>
+                    <td className="py-2 px-4">
+                      <button
+                        onClick={() => handleDelete(user._id)}
+                        className="text-red-500 hover:text-red-700 transition"
+                        title="Delete User"
+                      >
+                        <FaTrashAlt />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

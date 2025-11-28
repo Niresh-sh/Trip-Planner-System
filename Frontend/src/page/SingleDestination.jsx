@@ -52,7 +52,7 @@ if (!data) return <div className="p-10">Destination not found.</div>;
           <h1 className="text-4xl font-bold mb-2">{data.title}</h1>
           <div className="flex items-center gap-4 text-sm">
             <span>📍 {data.location}</span>
-            <span>⭐ {data.rating} ({data.reviews} reviews)</span>
+            {/* <span>⭐ {data.rating} ({data.reviews} reviews)</span> */}
             <span>🕒 {data.duration}</span>
           </div>
           <p className="mt-4 text-lg w-full max-w-xl">
@@ -84,15 +84,15 @@ if (!data) return <div className="p-10">Destination not found.</div>;
               {data.description}
             </p>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <li className="bg-gray-100 p-4 rounded">🏔️ Himalayan Views</li>
-              <li className="bg-gray-100 p-4 rounded">🌅 Sunrise Experience</li>
-              <li className="bg-gray-100 p-4 rounded">🕒 {data?.duration}</li>
-              <li className="bg-gray-100 p-4 rounded">❄️ Cool Climate</li>
+              <li className="bg-gray-100 p-4 rounded"> Himalayan Views</li>
+              <li className="bg-gray-100 p-4 rounded"> Sunrise Experience</li>
+              <li className="bg-gray-100 p-4 rounded"> {data?.duration}</li>
+              <li className="bg-gray-100 p-4 rounded"> Cool Climate</li>
             </ul>
           </section>
 
           <section className="bg-gray-100 p-4 rounded">
-            <h3 className="font-bold mb-2">🕒 Quick Info</h3>
+            <h3 className="font-bold mb-2"> Quick Info</h3>
             <p>Duration: {data?.duration}</p>
             <p>Difficulty: Moderate</p>
             <p>Languages: English, Nepali</p>
@@ -100,7 +100,7 @@ if (!data) return <div className="p-10">Destination not found.</div>;
           </section>
 
                     <section className="bg-gray-100 p-4 rounded">
-            <h3 className="font-bold mb-2">🌤️ Best Time to Visit</h3>
+            <h3 className="font-bold mb-2"> Best Time to Visit</h3>
             <p>Oct–Dec: {data.bestTime?.OctDec}</p>
             <p>Mar–May: {data.bestTime?.MarMay}</p>
             <p>Jun–Sep: {data.bestTime?.JunSep}</p>
@@ -125,7 +125,7 @@ if (!data) return <div className="p-10">Destination not found.</div>;
         {/* Right Sidebar */}
         <div className="space-y-6">
           <section className="bg-gray-100 p-2 rounded">
-            <h3 className="font-bold mb-2">📍 Location & Route</h3>
+            <h3 className="font-bold mb-2"> Location & Route</h3>
             <p className="text-sm text-gray-600">{data?.location}</p>
             <p className="text-sm text-gray-600">Elevation: {data?.elevation}</p>
             <p className="text-sm text-gray-600">Distance: 32km from Kathmandu</p>
@@ -150,9 +150,9 @@ if (!data) return <div className="p-10">Destination not found.</div>;
       
 
           <section className="bg-gray-100 p-4 rounded">
-            <h3 className="font-bold mb-2">📌 Nearby Attractions</h3>
+            <h3 className="font-bold mb-2"> Nearby Attractions</h3>
             {data.nearbyAttractions?.map((attr, i) => (
-              <p key={i}>• {attr?.name} – {attr?.distance} – ⭐ {attr?.rating}</p>
+              <p key={i}>• {attr?.name} – {attr?.distance} </p>
             ))}
           </section>
         </div>

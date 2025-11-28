@@ -59,7 +59,7 @@ const declineBooking = async (req, res) => {
     const booking = await BookingModel.findById(req.params.id);
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    booking.status = "Declined";
+    booking.status = "declined";
 
     if (booking.guide) {
       await GuideModel.findByIdAndUpdate(booking.guide, { status: "Available" });

@@ -31,11 +31,11 @@ const AllDestinations = () => {
     ...(categoryData?.categories || []),
   ];
 
-  // Filter based on category
+
   const filteredData = data?.destinations?.filter((dest) => {
     if (selectedCategory === "All") return true;
 
-    // Support populated category
+ 
     if (Array.isArray(dest.category)) {
       return dest.category.some(
         (cat) => cat.name?.toLowerCase() === selectedCategory.toLowerCase()
@@ -97,16 +97,16 @@ const AllDestinations = () => {
                   className="w-full h-56 object-cover"
                 />
                 {/* Rating Badge */}
-                <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+                {/* <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
                   <span className="text-orange-500">⭐</span>
                   <span className="text-gray-800 font-medium text-xs">
                     {dest.rating}
                   </span>
-                </span>
+                </span> */}
 
                 {/* Price Badge */}
-                <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full shadow">
-                  ${dest.cost}
+                <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full shadow">
+                  Rs.{dest.cost}
                 </span>
               </div>
 
@@ -117,10 +117,10 @@ const AllDestinations = () => {
                 </h3>
 
                 {/* Location */}
-                <p className="text-sm text-blue-600 flex items-center gap-1 mb-2">
+                <p className="text-sm text-green-600 flex items-center gap-1 mb-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-blue-500"
+                    className="h-4 w-4 text-green-500"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >

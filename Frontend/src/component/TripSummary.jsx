@@ -15,60 +15,86 @@ function TripSummary() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleConfirm = async () => {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
-    if (!token) {
-      toast.warning('You must be logged in to confirm a booking.');
-      setShowAuthModal(true);
+  if (!token) {
+    toast.warning("You must be logged in to confirm a booking.");
+    setShowAuthModal(true);
+    return;
+  }
+
+  setSubmitting(true);
+  setError("");
+
+  try {
+    // --------------------------
+    // 1. CREATE TRIP (your logic)
+    // --------------------------
+    const savedTrip = await axios.post(
+      "http://localhost:3000/api/trip/createtrip",
+      tripData,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    console.log("Trip created:", savedTrip.data);
+
+    // Save trip + booking data so we can use it after Khalti redirect
+    const completeBookingPayload = {
+      tripId: savedTrip.data._id,
+      destinationId: tripData.selectedDestination._id,
+      persons: tripData.persons,
+      startDate: tripData.startDate,
+      totalCost: tripData.totalCost,
+      contact: tripData.contactInfo,
+      guideIncluded: tripData.guideIncluded,
+      guideFee: tripData.guideFee,
+    };
+
+    localStorage.setItem(
+      "PENDING_BOOKING_DATA",
+      JSON.stringify(completeBookingPayload)
+    );
+
+    // ---------------------------------
+    // 2. INITIALIZE KHALTI PAYMENT HERE
+    // ---------------------------------
+    const paymentResponse = await axios.post(
+      "http://localhost:3000/api/payment/process",
+      {
+        destinationId: tripData.selectedDestination._id,
+        firstName: tripData.contactInfo.name.split(" ")[0],
+        lastName: tripData.contactInfo.name.split(" ")[1] || "",
+        email: tripData.contactInfo.email,
+        phone: tripData.contactInfo.phone,
+        totalCost: tripData.totalCost,
+        guideCost: tripData.guideFee || 0,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    const { payment_url } = paymentResponse.data;
+
+    if (!payment_url) {
+      toast.error("Failed to initialize payment.");
       return;
     }
 
-    setSubmitting(true);
-    setError('');
+    // Redirect to Khalti page
+    window.location.href = payment_url;
 
-    try {
-      // 1. Create trip first
-      const savedTrip = await axios.post(
-        'http://localhost:3000/api/trip/createtrip',
-        tripData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log('Trip created:', savedTrip.data);
-
-      // 2. Create booking using trip ID and booking info
-      const booking = await axios.post(
-        'http://localhost:3000/api/booking/create-booking',
-        {
-          tripId: savedTrip.data._id,
-          destinationId: tripData.selectedDestination._id,
-          persons: tripData.persons,
-          startDate: tripData.startDate,
-          totalCost: tripData.totalCost,
-          contact: tripData.contactInfo,
-          guideIncluded: tripData.guideIncluded,
-          guideFee: tripData.guideFee, // include fee so BookingConfirmed can render it after reload
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log('Booking created:', booking.data);
-
-      // Only navigate if booking creation succeeded
-      navigate(`/booking-success/${booking.data.booking._id}`, {
-        state: { booking: booking.data.booking, trip: savedTrip.data },
-      });
-    } catch (err) {
-      console.error('Booking error:', err);
-      const message = err?.response?.data?.message || 'Booking failed.';
-      setError(message);
-      toast.error(message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    // After this point, the code stops because user is redirected
+  } catch (err) {
+    console.error("Booking error:", err);
+    const message = err?.response?.data?.message || "Booking failed.";
+    setError(message);
+    toast.error(message);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   if (!tripData)
     return <p className="text-center mt-10">No trip data available.</p>;

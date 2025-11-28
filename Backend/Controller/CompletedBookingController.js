@@ -1,19 +1,23 @@
-// New file: background job to mark approved bookings as success after endDate passes
-
+// jobs/CompletedBookingJob.js
 import Booking from "../Models/BookingModel.js";
+import GuideModel from "../Models/GuideModel.js";   
 
-const CHECK_INTERVAL_MS = 1000 * 60 * 30; // 30 minutes
+const INTERVAL = 1000 * 60 * 30; // 30 minutes
 
 async function completeDueBookings() {
   try {
     const now = new Date();
 
-    // Treat endDate <= now as completed. If you want "end of day" semantics for date-only entries,
-    // ensure endDate is stored with end-of-day time or adjust here to setHours(23,59,59,999).
     const filter = {
       status: "approved",
       endDate: { $lte: now },
     };
+
+    // Find bookings due for completion so we can collect guide IDs
+    const dueBookings = await Booking.find(filter).select("guide");
+    if (!dueBookings || dueBookings.length === 0) {
+      return;
+    }
 
     const update = {
       $set: {
@@ -24,27 +28,36 @@ async function completeDueBookings() {
     };
 
     const result = await Booking.updateMany(filter, update);
-    if (result.matchedCount && result.modifiedCount) {
-      console.log(`CompleteBookingsJob: marked ${result.modifiedCount} booking(s) as success.`);
-    } else if (result.matchedCount) {
-      console.log(`CompleteBookingsJob: ${result.matchedCount} booking(s) matched, no changes needed.`);
-    } else {
-      // nothing to update
+
+    if (result.modifiedCount > 0) {
+      console.log(`Completed ${result.modifiedCount} bookings.`);
+    }
+
+    // Collect unique guide IDs from the bookings and mark them available
+    const guideIds = [
+      ...new Set(
+        dueBookings
+          .map((b) => (b.guide ? b.guide.toString() : null))
+          .filter(Boolean)
+      ),
+    ];
+
+    if (guideIds.length > 0) {
+      const guideRes = await GuideModel.updateMany(
+        { _id: { $in: guideIds } },
+        { $set: { status: "Available", assignedDestination: null } }
+      );
+
+      const updatedGuides =
+        (guideRes && (guideRes.modifiedCount || guideRes.nModified)) || 0;
+      console.log(`Updated ${updatedGuides} guides to Available.`);
     }
   } catch (err) {
-    console.error("CompleteBookingsJob error:", err);
+    console.error("Booking completion job error:", err);
   }
 }
 
-export function CompleteBooking() {
-  // run immediately
-  completeDueBookings().catch((e) => console.error(e));
-
-  // schedule periodic runs
-  const id = setInterval(() => {
-    completeDueBookings().catch((e) => console.error(e));
-  }, CHECK_INTERVAL_MS);
-
-  // return stop function if caller wants to clear interval
-  return () => clearInterval(id);
+export default function CompleteBooking() {
+  completeDueBookings();
+  return setInterval(completeDueBookings, INTERVAL);
 }

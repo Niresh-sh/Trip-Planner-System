@@ -14,9 +14,10 @@ export default function PlanTrip() {
   });
   const [destinations, setDestinations] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
-  const [includeGuide, setIncludeGuide] = useState(false);
+
   const [errors, setErrors] = useState({});
 
+  const includeGuide = true; // guide always included
   const GUIDE_FEE = 1000;
 
   // Prefill name/email from localStorage when the form loads
@@ -55,8 +56,7 @@ export default function PlanTrip() {
 
   const calculateTotalCost = () => {
     const baseCost = selectedDestination?.cost || 0;
-    const total = baseCost * persons + (includeGuide ? GUIDE_FEE : 0);
-    return total;
+    return baseCost * persons + GUIDE_FEE;
   };
 
   const calculateDuration = () => {
@@ -81,13 +81,12 @@ export default function PlanTrip() {
   // Filter destinations by budget only (category removed)
   const recommendedDestinations = useMemo(() => {
     if (!readyToRecommend) return [];
-    const fee = includeGuide ? GUIDE_FEE : 0;
 
     return destinations.filter((d) => {
-      const total = (Number(d.cost) || 0) * persons + fee;
+      const total = (Number(d.cost) || 0) * persons + GUIDE_FEE;
       return total <= Number(budget);
     });
-  }, [readyToRecommend, destinations, includeGuide, persons, budget]);
+  }, [readyToRecommend, destinations, persons, budget]);
 
   const validateForm = () => {
     const formErrors = {};
@@ -139,8 +138,9 @@ export default function PlanTrip() {
       persons: Number(persons),
       contactInfo,
       selectedDestination,
-      guideIncluded: includeGuide,
-      guideFee: includeGuide ? GUIDE_FEE : 0,
+      guideIncluded: true,
+      guideFee: GUIDE_FEE,
+
       totalCost,
       duration,
     };
@@ -278,7 +278,8 @@ export default function PlanTrip() {
             </p>
           ) : recommendedDestinations.length === 0 ? (
             <p className="text-gray-500">
-              No destinations match your budget. Try adjusting budget or persons.
+              No destinations match your budget. Try adjusting budget or
+              persons.
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[520px] overflow-y-auto pr-1">
@@ -334,7 +335,9 @@ export default function PlanTrip() {
                   : "bg-gray-300 cursor-not-allowed"
               }`}
             >
-              {selectedDestination ? "Show Trip Summary" : "Select a Destination"}
+              {selectedDestination
+                ? "Show Trip Summary"
+                : "Select a Destination"}
             </button>
           </div>
         </div>

@@ -29,12 +29,12 @@ function Dashboard() {
                 User Details
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="updateprofile" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5">
                 <FaEdit className="text-green-500" />
                 Update Profile
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="changepassword" className="dashboard-link flex items-center mx-auto w-[20vh] gap-5 ">
                 <FaLock className="text-yellow-500" />

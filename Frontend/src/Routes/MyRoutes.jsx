@@ -28,6 +28,7 @@ import AdminUsers from "../page/AdminsDashboard/AdminUsers";
 import { useNavigate } from "react-router-dom";
 import BookingHistory from "../page/UserDashboard/BookingHistory";
 import BookingConfirmed from "../page/BookingConfirmed";
+import PaymentSuccess from "../page/UserDashboard/PaymentSuccess";
 
 function MyRoutes() {
   const Navigate = useNavigate();
@@ -47,6 +48,7 @@ function MyRoutes() {
             path="/booking-success/:bookingId"
             element={<BookingConfirmed />}
           />
+          <Route path="payment-success" element={<PaymentSuccess />} />
 
           {/* User Dashboard Routes (protected) */}
           <Route element={<PrivateRoute />}>
@@ -55,6 +57,7 @@ function MyRoutes() {
               <Route path="changepassword" element={<UserProfile />} />
               <Route path="updateprofile" element={<ChangeProfile />} />
               <Route path="bookinghistory" element={<BookingHistory />} />
+              
             </Route>
           </Route>
 

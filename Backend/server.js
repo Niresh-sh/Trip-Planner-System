@@ -16,9 +16,12 @@ import StatsRoute from "./Routes/StatsRoute.js";
 import AdminBookingRoute from "./Routes/AdminBookingRoute.js";
 import ActivityRoute from "./Routes/ActivityRoute.js";
 import AnalyticsRoute from "./Routes/AnalyticsRoute.js";
+import PaymentRoute from "./Routes/PaymentRoute.js";
+import CompleteBooking from "./Controller/CompletedBookingController.js";
+import RecommendRoute from "./Routes/recommendRoute.js";
 
 // background job
-import { CompleteBooking } from "./Controller/CompletedBookingController.js";
+
 
 dotenv.config();
 
@@ -28,15 +31,8 @@ const io = initSocket(httpServer);
 
 const port = process.env.PORT || 5000;
 
-Connect()
-  .then(() => {
-    // start complete job after DB connection
-    CompleteBooking();
-  })
-  .catch((err) => {
-    console.error("DB connect failed, job not started:", err);
-  });
-
+Connect();
+CompleteBooking();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -64,6 +60,8 @@ app.use("/api/stats", StatsRoute);
 app.use("/api/adminbooking", AdminBookingRoute);
 app.use("/api/activity", ActivityRoute);
 app.use("/api/analytics", AnalyticsRoute);
+app.use("/api/payment", PaymentRoute);
+app.use("/api/recommend", RecommendRoute);
 
 app.get("/", (req, res) => res.send("API is running"));
 

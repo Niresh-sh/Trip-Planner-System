@@ -10,7 +10,6 @@ const AddCategory = () => {
   const [listLoading, setListLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Inline edit state
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState("");
 
@@ -25,7 +24,6 @@ const AddCategory = () => {
       const list = data?.categories || [];
       setCategories(Array.isArray(list) ? list : []);
     } catch (err) {
-      console.error("Fetch categories error:", err);
       setError("Failed to load categories.");
     } finally {
       setListLoading(false);
@@ -38,10 +36,7 @@ const AddCategory = () => {
 
   const handleAdd = async () => {
     const trimmed = name.trim();
-    if (!trimmed) {
-      setMessage("⚠️ Category name is required.");
-      return;
-    }
+    if (!trimmed) return setMessage("⚠️ Category name is required.");
     try {
       setLoading(true);
       setMessage("");
@@ -53,7 +48,6 @@ const AddCategory = () => {
         },
         body: JSON.stringify({ name: trimmed }),
       });
-
       const data = await res.json();
       if (data.success) {
         setMessage(`✅ Created: ${data.category.name}`);
@@ -63,7 +57,6 @@ const AddCategory = () => {
         setMessage(`⚠️ ${data.message || "Unable to create category"}`);
       }
     } catch (err) {
-      console.error(err);
       setMessage("❌ Failed to create category.");
     } finally {
       setLoading(false);
@@ -83,10 +76,7 @@ const AddCategory = () => {
 
   const saveEdit = async () => {
     const trimmed = editingName.trim();
-    if (!trimmed) {
-      setMessage("⚠️ Category name is required.");
-      return;
-    }
+    if (!trimmed) return setMessage("⚠️ Category name is required.");
     try {
       setLoading(true);
       setMessage("");
@@ -107,7 +97,6 @@ const AddCategory = () => {
         setMessage(`⚠️ ${data.message || "Unable to update category"}`);
       }
     } catch (err) {
-      console.error(err);
       setMessage("❌ Failed to update category.");
     } finally {
       setLoading(false);
@@ -133,7 +122,6 @@ const AddCategory = () => {
         setMessage(`⚠️ ${data.message || "Unable to delete category"}`);
       }
     } catch (err) {
-      console.error(err);
       setMessage("❌ Failed to delete category.");
     } finally {
       setLoading(false);
@@ -141,97 +129,110 @@ const AddCategory = () => {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Manage Categories</h2>
+    <div className="max-w-4xl mx-auto p-4 space-y-6">
+      <h2 className="text-2xl font-bold text-green-600">Manage Categories</h2>
 
-      {/* Create */}
-      <div className="flex flex-wrap gap-2 items-center">
+      {/* Add Category */}
+      <div className="flex flex-col md:flex-row gap-2 items-center">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Category name"
-          className="border px-3 py-2 rounded w-64"
+          className="border px-4 py-2 rounded w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-green-400"
           disabled={loading}
         />
         <button
           onClick={handleAdd}
           disabled={loading}
-          className={`px-4 py-2 rounded text-white ${loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"}`}
+          className={`px-4 py-2 rounded text-white ${
+            loading ? "bg-green-300" : "bg-green-600 hover:bg-green-700"
+          }`}
         >
           {loading ? "Adding..." : "Add"}
         </button>
-        {message && <p className="text-sm">{message}</p>}
-        {error && <p className="text-sm text-red-500">{error}</p>}
       </div>
+      {(message || error) && (
+        <p className={`text-sm ${error ? "text-red-500" : "text-green-600"}`}>
+          {message || error}
+        </p>
+      )}
 
-      {/* List */}
-      <div className="bg-white rounded shadow">
-        <div className="border-b px-4 py-2 font-medium">Existing Categories</div>
+      {/* Category List */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="bg-gray-50 border-b px-4 py-3 font-medium text-gray-700">
+          Existing Categories
+        </div>
         {listLoading ? (
           <div className="p-4 text-gray-500">Loading...</div>
         ) : categories.length === 0 ? (
           <div className="p-4 text-gray-500">No categories found</div>
         ) : (
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-left">
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4 w-40">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((cat) => (
-                <tr key={cat._id} className="border-t">
-                  <td className="py-2 px-4">
-                    {editingId === cat._id ? (
-                      <input
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        className="border px-2 py-1 rounded w-full"
-                      />
-                    ) : (
-                      cat.name
-                    )}
-                  </td>
-                  <td className="py-2 px-4 space-x-2">
-                    {editingId === cat._id ? (
-                      <>
-                        <button
-                          onClick={saveEdit}
-                          disabled={loading}
-                          className={`px-3 py-1 rounded text-white ${loading ? "bg-green-300" : "bg-green-600 hover:bg-green-700"}`}
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={cancelEdit}
-                          className="px-3 py-1 rounded border"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => startEdit(cat)}
-                          className="px-3 py-1 rounded border"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(cat._id)}
-                          disabled={loading}
-                          className={`px-3 py-1 rounded text-white ${loading ? "bg-red-300" : "bg-red-600 hover:bg-red-700"}`}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm divide-y divide-gray-200">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="py-2 px-4 text-left">Name</th>
+                  <th className="py-2 px-4 w-40 text-left">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {categories.map((cat) => (
+                  <tr key={cat._id} className="hover:bg-gray-50">
+                    <td className="py-2 px-4">
+                      {editingId === cat._id ? (
+                        <input
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          className="border px-2 py-1 rounded w-full focus:outline-none focus:ring-2 focus:ring-green-400"
+                        />
+                      ) : (
+                        cat.name
+                      )}
+                    </td>
+                    <td className="py-2 px-4 space-x-2">
+                      {editingId === cat._id ? (
+                        <>
+                          <button
+                            onClick={saveEdit}
+                            disabled={loading}
+                            className={`px-3 py-1 rounded text-white ${
+                              loading ? "bg-green-300" : "bg-green-600 hover:bg-green-700"
+                            }`}
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            className="px-3 py-1 rounded border hover:bg-gray-100 transition"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => startEdit(cat)}
+                            className="px-3 py-1 rounded border hover:bg-gray-100 transition"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(cat._id)}
+                            disabled={loading}
+                            className={`px-3 py-1 rounded text-white ${
+                              loading ? "bg-gray-300" : "bg-gray-500 hover:bg-gray-600"
+                            }`}
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

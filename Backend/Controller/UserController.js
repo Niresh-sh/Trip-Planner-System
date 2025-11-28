@@ -39,6 +39,7 @@ const LoginController = async (req, res) => {
     });
 
     res.status(200).json({
+      _id: user._id,  
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -228,6 +229,7 @@ const GoogleLoginController = async (req, res) => {
         await user.save();
       } else if (!user) {
         user = await UserModel.create({
+          _id: user._id,  
           firstName: given_name,
           lastName: family_name,
           email,
@@ -262,6 +264,7 @@ const GoogleLoginController = async (req, res) => {
     });
 
     res.status(200).json({
+      _id: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,

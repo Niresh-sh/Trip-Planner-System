@@ -11,18 +11,24 @@ import {
   FaMagic,
   FaUsers,
   FaShieldAlt,
-  FaSearchLocation
+  FaSearchLocation,
 } from "react-icons/fa";
 import HomeGallery from "./HomeGallery";
 
 function Body() {
-  const [destinations, setDestinations] = useState([]);
-  const navigate = useNavigate();
+  const [allDestinations, setAllDestinations] = useState([]); // all destinations for search
+
+  const [recommendedDestinations, setRecommendedDestinations] = useState([]);
+  const [destinations, setDestinations] = useState([]); // 4 cards for display
+  const token = localStorage.getItem("token");
+
+
   useEffect(() => {
     fetch("http://localhost:3000/api/destination/get-destination")
       .then((res) => res.json())
       .then((data) => {
-        setDestinations(data?.destinations?.slice(0, 4));
+        setAllDestinations(data?.destinations || []); // store all for search
+        setDestinations(data?.destinations?.slice(0, 4)); // only 4 for cards
       })
       .catch(console.error);
   }, []);
@@ -35,69 +41,202 @@ function Body() {
       setFiltered([]);
       return;
     }
-    // Modify the filter logic to search across name, title, and location
-  const results = destinations.filter((dest) =>
-    // Check if any of the destination properties contain the query string
-    [dest.name, dest.title, dest.location].some((field) =>
-      field?.toLowerCase().includes(query.toLowerCase())
-    )
-  );
+    //search across name, title, and location
+    const results = destinations.filter((dest) =>
+      
+      [dest.name, dest.title, dest.location].some((field) =>
+        field?.toLowerCase().includes(query.toLowerCase())
+      )
+    );
 
-  setFiltered(results.slice(0, 5)); // limit to top 5 results
-}, [query, destinations]);
+    setFiltered(results.slice(0, 5));
+  }, [query, destinations]);
 
   function onSelect(dest) {
     setQuery(dest.name || dest.title || dest.location);
     setFiltered([]);
-    // Navigate to destination detail page
+   
     navigate(`/destination/${dest._id}`);
   }
+  useEffect(() => {
+    if (query.length === 0) {
+      setFiltered([]);
+      return;
+    }
+
+    const results = allDestinations.filter((dest) =>
+      [dest.name, dest.title, dest.location].some((field) =>
+        field?.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+
+    setFiltered(results.slice(0, 5));
+  }, [query, allDestinations]);
+
+  function onSelect(dest) {
+    if (!dest?._id) {
+      console.error("Destination _id missing:", dest);
+      return;
+    }
+    setQuery(dest.name || dest.title || dest.location);
+    setFiltered([]);
+    navigate(`/destination/${dest._id}`);
+  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const userId = localStorage.getItem("id"); // correct key
+        console.log("USER ID FROM LOCALSTORAGE:", userId);
+
+        // or from auth context
+        const res = await fetch(
+          `http://localhost:3000/api/recommend/recommendations/${userId}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch recommendations");
+        const data = await res.json();
+        setRecommendedDestinations(data.recommendedDestinations || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchRecommendations();
+  }, []);
 
   return (
     <>
       {/* <FadeInSection> */}
-        <section className="relative z-[99]  text-center bg-gray-100 pt-3 pb-12">
-          <h1 className="text-4xl p-4 font-bold justify-center">Where To?</h1>
+      <section className="relative z-[99]  text-center bg-gray-100 pt-3 pb-12">
+        <h1 className="text-4xl p-4 font-bold justify-center">Where To?</h1>
 
-          <div className="relative w-full max-w-xl mx-auto">
-            <input
-              placeholder="e.g. kathmandu"
-              className="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-white shadow-xl hover:outline-none focus:ring-green-500 focus:border-green-400"
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="absolute inline-flex items-center h-10 px-4 py-2 text-sm text-white transition duration-150 ease-in-out rounded-full outline-none right-3 top-3 bg-green-600 sm:px-6 sm:text-base sm:font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              onClick={() => {
-                if (filtered.length > 0) onSelect(filtered[0]);
-              }}
-            >
-              <h1 className="mr-2"><FaSearchLocation/></h1>
-              Search
-            </button>
-
-            {filtered.length > 0 && (
-              <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
-                {filtered.map((dest) => (
+        <div className="relative w-full max-w-xl mx-auto">
+          <input
+            placeholder="e.g. kathmandu"
+            className="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-white shadow-xl hover:outline-none focus:ring-green-500 focus:border-green-400"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div
+            className="absolute inline-flex items-center justify-center h-16 w-16 text-green-500 
+             transition duration-150 ease-in-out rounded-full outline-none right-3  
+              focus:outline-none focus:ring-2 
+             focus:ring-offset-2 focus:ring-green-500 "
+            onClick={() => {
+              if (filtered.length > 0) onSelect(filtered[0]);
+            }}
+          >
+            <FaSearchLocation />
+          </div>
+          {filtered.length > 0 && (
+            <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
+              {filtered.map((dest) => {
+                const displayText = dest.name || dest.title || dest.location;
+                const regex = new RegExp(`(${query})`, "gi"); // match query, case-insensitive
+                const parts = displayText.split(regex); // split around the query
+                return (
                   <li
                     key={dest._id}
                     onClick={() => onSelect(dest)}
                     className="cursor-pointer px-4 py-2 hover:bg-green-100"
                   >
-                    {dest.name || dest.title || dest.location}
+                    {parts.map((part, i) =>
+                      regex.test(part) ? (
+                        <span key={i} className="bg-yellow-200">
+                          {part}
+                        </span>
+                      ) : (
+                        <span key={i}>{part}</span>
+                      )
+                    )}
                   </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </section>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </section>
       {/* </FadeInSection> */}
 
       {/* <FadeInSection> */}
-        <Slider />
+      <Slider />
       {/* </FadeInSection> */}
+
+     {token && (
+  <section className="max-w-7xl mx-auto px-4 py-12">
+    <h2 className="text-3xl font-bold text-gray-800 mb-2">
+      Recommended Destinations
+    </h2>
+    <p className="text-gray-600 mb-6">
+      Based on your interests and past trips
+    </p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {recommendedDestinations?.map((dest) => (
+        <div
+          key={dest._id}
+          className="bg-white rounded-lg shadow-lg overflow-hidden relative transition-transform duration-300 hover:scale-105 cursor-pointer"
+          onClick={() => navigate(`/destination/${dest._id}`)}
+        >
+          {/* Image & Badges */}
+          <div className="relative">
+            <img
+              src={dest.image}
+              alt={dest.title}
+              className="w-full h-56 object-cover"
+            />
+
+            {/* Rating Badge */}
+            {/* <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+              <span className="text-orange-500">⭐</span>
+              <span className="text-gray-800 font-medium text-xs">
+                {dest.rating}
+              </span>
+            </span> */}
+
+            {/* Price Badge */}
+            <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full shadow">
+              Rs.{dest.cost}
+            </span>
+          </div>
+
+          {/* Card Content */}
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">
+              {dest.title}
+            </h3>
+
+            {/* Location */}
+            <p className="text-sm text-green-600 flex items-center gap-1 mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-green-500"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.05 4.05a7 7 0 019.9 9.9l-4.95 4.95-4.95-4.95a7 7 0 010-9.9zM10 11a1 1 0 100-2 1 1 0 000 2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {dest.location}
+            </p>
+
+            {/* Description */}
+            <p className="text-sm text-gray-600">
+              {dest.description?.length > 80
+                ? dest.description.slice(0, 80) + "..."
+                : dest.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
 
       <section className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">
@@ -121,16 +260,16 @@ function Body() {
                   className="w-full h-56 object-cover"
                 />
                 {/* Rating Badge */}
-                <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+                {/* <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
                   <span className="text-orange-500">⭐</span>
                   <span className="text-gray-800 font-medium text-xs">
                     {dest.rating}
                   </span>
-                </span>
+                </span> */}
 
                 {/* Price Badge */}
                 <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full shadow">
-                  ${dest.cost}
+                  Rs.{dest.cost}
                 </span>
               </div>
 
