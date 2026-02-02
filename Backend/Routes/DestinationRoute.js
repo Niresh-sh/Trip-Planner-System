@@ -1,6 +1,6 @@
 
 import { CreateDestinationController, DeleteDestinationController, getAllDestinationController, GetSingleDestinationController, UpdateDestinationController } from "../Controller/DestinationController.js";
-import { uploadProductImage } from "../Middleware/Multer.js";
+//import { uploadProductImage } from "../Middleware/Multer.js";
 import express from "express";
 const router = express.Router();
 
