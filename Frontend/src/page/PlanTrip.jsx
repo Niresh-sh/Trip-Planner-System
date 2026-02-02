@@ -36,10 +36,12 @@ export default function PlanTrip() {
     }));
   }, []);
 
+  const backendURL = import.meta.env.VITE_API_URL;
+
   // Fetch destinations
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/trip/getdest")
+      .get(`${backendURL}/api/trip/getdest`)
       .then((res) =>
         setDestinations(
           Array.isArray(res.data) ? res.data : res.data?.destinations || []

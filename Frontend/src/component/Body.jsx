@@ -21,7 +21,7 @@ function Body() {
   const [recommendedDestinations, setRecommendedDestinations] = useState([]);
   const [destinations, setDestinations] = useState([]);
   const token = localStorage.getItem("token");
-  const backendURL = import.meta.env.VITE_API_URL;
+  const backendURL = import.meta.env.VITE_API_URL.replace(/\/$/, "");;
 
   useEffect(() => {
     fetch(`${backendURL}/api/destination/get-destination`)

@@ -6,12 +6,12 @@ function Category() {
   const [allDest, setAllDest] = useState([]);
   const [categories, setCategories] = useState(['All']);
   const [loading, setLoading] = useState(false);
-
+  const backendURL = import.meta.env.VITE_API_URL;
   // Fetch categories from backend
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/category');
+        const res = await fetch(`${backendURL}/api/category`);
         const data = await res.json();
         const list = (data?.categories || []).map(c => c.name).filter(Boolean);
         setCategories(['All', ...list]);
@@ -26,7 +26,7 @@ function Category() {
     (async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:3000/api/destination');
+        const res = await fetch(`${backendURL}/api/destination`);
         const data = await res.json();
         const dests = Array.isArray(data) ? data : (data?.destinations || []);
         setAllDest(dests);

@@ -11,6 +11,7 @@ function BookingConfirmed() {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const backendURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!bookingId) {
@@ -22,7 +23,7 @@ function BookingConfirmed() {
 
     const token = localStorage.getItem("token");
     axios
-      .get(`http://localhost:3000/api/booking/userbooking/${bookingId}`, {
+      .get(`${backendURL}/api/booking/userbooking/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -87,7 +88,7 @@ function BookingConfirmed() {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/booking/cancel/${bookingId}`,
+        `${backendURL}/api/booking/cancel/${bookingId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

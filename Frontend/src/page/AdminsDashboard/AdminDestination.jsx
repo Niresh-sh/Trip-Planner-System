@@ -23,12 +23,12 @@ const AdminDestination = () => {
   const [destinations, setDestinations] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [categories, setCategories] = useState([]);
-
+  const backendURL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/category/get-category"
+          `${backendURL}/api/category/get-category`
         );
         const data = Array.isArray(res.data)
           ? res.data
@@ -45,7 +45,7 @@ const AdminDestination = () => {
   const fetchDestinations = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/destination/get-destination"
+        `${backendURL}/api/destination/get-destination`
       );
       setDestinations(res.data.destinations);
     } catch (error) {
@@ -122,12 +122,12 @@ const AdminDestination = () => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:3000/api/destination/update-destination/${editingId}`,
+          `${backendURL}/api/destination/update-destination/${editingId}`,
           payload
         );
       } else {
         await axios.post(
-          "http://localhost:3000/api/destination/create-destination",
+          `${backendURL}/api/destination/create-destination`,
           payload
         );
       }
@@ -185,7 +185,7 @@ const AdminDestination = () => {
     if (window.confirm("Are you sure you want to delete this destination?")) {
       try {
         await axios.delete(
-          `http://localhost:3000/api/destination/delete-destination/${id}`
+          `${backendURL}/api/destination/delete-destination/${id}`
         );
         fetchDestinations();
       } catch (error) {

@@ -48,8 +48,10 @@ const AdminDashboard = () => {
     return today;
   });
 
+  const backendURL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    const socket = io("http://localhost:3000", {
+    const socket = io(`${backendURL}`, {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
@@ -73,7 +75,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Fetch data from backend API
-    fetch("http://localhost:3000/api/stats/dashboard")
+    fetch(`${backendURL}/api/stats/dashboard`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
         return res.json();
@@ -145,7 +147,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/adminbooking", {
+        const res = await fetch(`${backendURL}/api/adminbooking`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
@@ -175,7 +177,7 @@ const AdminDashboard = () => {
         if (isSingleDay) params.append("groupBy", "day");
 
         const res = await fetch(
-          `http://localhost:3000/api/analytics/revenue?${params.toString()}`
+          `${backendURL}/api/analytics/revenue?${params.toString()}`
         );
         if (!res.ok) throw new Error(`Analytics fetch failed: ${res.status}`);
         const data = await res.json();
@@ -228,7 +230,7 @@ const AdminDashboard = () => {
     const fetchTopDestinations = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3000/api/stats/top-destinations"
+          `${backendURL}/api/stats/top-destinations`
         );
         if (!res.ok) throw new Error("Failed to fetch top destinations");
 
@@ -242,7 +244,7 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/activity")
+    fetch(`${backendURL}/api/activity`)
       .then((res) => {
         if (!res.ok) throw new Error(`Activities fetch failed (${res.status})`);
         return res.json();
@@ -261,7 +263,7 @@ const AdminDashboard = () => {
   const handleApprove = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/adminbooking/${id}/approve`,
+        `${backendURL}/api/adminbooking/${id}/approve`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -281,7 +283,7 @@ const AdminDashboard = () => {
   const handleDecline = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/adminbooking/${id}/decline`,
+        `${backendURL}/api/adminbooking/${id}/decline`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -302,7 +304,7 @@ const AdminDashboard = () => {
     if (!window.confirm("Are you sure you want to delete this booking?"))
       return;
     try {
-      const res = await fetch(`http://localhost:3000/api/adminbooking/${id}`, {
+      const res = await fetch(`${backendURL}/api/adminbooking/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });

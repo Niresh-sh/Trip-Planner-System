@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
 
-const API_BASE_URL = 'http://localhost:3000';
+const backendURL = import.meta.env.VITE_API_URL;
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -16,7 +16,7 @@ const AdminUsers = () => {
         return;
       }
 
-      const res = await axios.get(`${API_BASE_URL}/api/users/allusers`, {
+      const res = await axios.get(`${backendURL}/api/users/allusers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -40,7 +40,7 @@ const AdminUsers = () => {
         alert('Not authenticated');
         return;
       }
-      await axios.delete(`${API_BASE_URL}/api/users/deleteuser/${id}`, {
+      await axios.delete(`${backendURL}/api/users/deleteuser/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(prev => prev.filter(user => user._id !== id));

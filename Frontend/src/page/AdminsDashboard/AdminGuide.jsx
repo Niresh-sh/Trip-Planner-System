@@ -7,10 +7,10 @@ function AdminGuide() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
-
+  const backendURL = import.meta.env.VITE_API_URL;
   const fetchGuides = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/guide/all");
+      const res = await axios.get(`${backendURL}/api/guide/all`);
       setGuides(res.data);
     } catch (err) {
       setError("Failed to load guides");
@@ -35,12 +35,12 @@ function AdminGuide() {
     try {
       if (editingId) {
         const res = await axios.put(
-          `http://localhost:3000/api/guide/update/${editingId}`,
+          `${backendURL}/api/guide/update/${editingId}`,
           { ...form, languages: languagesArray }
         );
         setGuides(guides.map((g) => (g._id === editingId ? res.data : g)));
       } else {
-        const res = await axios.post("http://localhost:3000/api/guide/create", {
+        const res = await axios.post(`${backendURL}/api/guide/create`, {
           ...form,
           languages: languagesArray,
         });
@@ -67,7 +67,7 @@ function AdminGuide() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/guide/delete/${id}`);
+      await axios.delete(`${backendURL}/api/guide/delete/${id}`);
       setGuides(guides.filter((g) => g._id !== id));
     } catch (err) {
       setError("Failed to delete guide");

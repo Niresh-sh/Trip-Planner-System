@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 function PaymentSuccess() {
   const navigate = useNavigate();
     const hasRun = useRef(false);
+    const backendURL = import.meta.env.VITE_API_URL;  
 
   useEffect(() => {
        if (hasRun.current) return;
@@ -23,7 +24,7 @@ function PaymentSuccess() {
 
         // Verify payment
         const verifyRes = await axios.post(
-          "http://localhost:3000/api/payment/verify",
+          `${backendURL}/api/payment/verify`,
           { pidx },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -35,7 +36,7 @@ function PaymentSuccess() {
 
         //  Payment successful → create booking
         const bookingRes = await axios.post(
-          "http://localhost:3000/api/booking/create-booking", // match backend route
+          `${backendURL}/api/booking/create-booking`, // match backend route
           {
             tripId: tripData.tripId,
             destinationId: tripData.destinationId,
@@ -57,7 +58,6 @@ function PaymentSuccess() {
           // Redirect to confirmed booking page
            const bookingId = bookingRes.data.booking._id; 
          navigate(`/booking-success/${bookingId}`);
-;
         } else {
           toast.error("Booking creation failed.");
         }

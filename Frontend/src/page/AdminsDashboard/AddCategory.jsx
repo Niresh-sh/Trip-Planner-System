@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 const AddCategory = () => {
   const [name, setName] = useState("");
@@ -15,11 +14,13 @@ const AddCategory = () => {
 
   const token = localStorage.getItem("token");
 
+  const backendURL = import.meta.env.VITE_API_URL;
+
   const fetchCategories = async () => {
     try {
       setListLoading(true);
       setError("");
-      const res = await fetch(`${API_BASE_URL}/api/category/get-category`);
+      const res = await fetch(`${backendURL}/api/category/get-category`);
       const data = await res.json();
       const list = data?.categories || [];
       setCategories(Array.isArray(list) ? list : []);
@@ -40,7 +41,7 @@ const AddCategory = () => {
     try {
       setLoading(true);
       setMessage("");
-      const res = await fetch(`${API_BASE_URL}/api/category/create-category`, {
+      const res = await fetch(`${backendURL}/api/category/create-category`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +81,7 @@ const AddCategory = () => {
     try {
       setLoading(true);
       setMessage("");
-      const res = await fetch(`${API_BASE_URL}/api/category/update-category/${editingId}`, {
+      const res = await fetch(`${backendURL}/api/category/update-category/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +109,7 @@ const AddCategory = () => {
     try {
       setLoading(true);
       setMessage("");
-      const res = await fetch(`${API_BASE_URL}/api/category/delete-category/${id}`, {
+      const res = await fetch(`${backendURL}/api/category/delete-category/${id}`, {
         method: "DELETE",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

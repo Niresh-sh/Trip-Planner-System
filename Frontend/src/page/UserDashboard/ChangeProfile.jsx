@@ -10,12 +10,13 @@ function ChangeProfile() {
   const [old_data, setOldData]= useState([]);
   const [loading, setLoading] = useState(false);
   const [userprofile , setUserProfile] = useState([]);
+  const backendURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchDatas = async () => {
       try {
         let response = await axios.get(
-          "http://localhost:3000/api/users/change-profile",
+          `${backendURL}/api/users/change-profile`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -42,7 +43,7 @@ function ChangeProfile() {
     // Validate input fields
     try {
       let response = await axios.put(
-        "http://localhost:3000/update-profile",
+        `${backendURL}/api/users/update-profile`,
         {
          email : email,
          firstName : firstName,
@@ -58,10 +59,10 @@ function ChangeProfile() {
       );
 
       if (response.status === 200) {
-        toast.success("Password Changed Successfully");
+        toast.success("Profile Updated Successfully");
       }
     } catch (e) {
-      setError("Failed to change password. Please try again.");
+      setError("Failed to update profile. Please try again.");
       console.error(e.message);
     } finally {
       setLoading(false);
@@ -116,7 +117,7 @@ function ChangeProfile() {
           }`}
           disabled={loading}
         >
-          {loading ? "Processing..." : "Change Password"}
+          {loading ? "Processing..." : "Update Profile"}
         </button>
       </form>
     </div>

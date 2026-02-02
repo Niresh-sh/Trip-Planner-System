@@ -7,11 +7,12 @@ function BookingHistory() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:3000/api/booking/userbooking', {
+      const { data } = await axios.get(`${backendURL}/api/booking/userbooking`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(Array.isArray(data) ? data : []);
@@ -35,7 +36,7 @@ function BookingHistory() {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/api/booking/delete-booking/${bookingId}`, {
+      await axios.delete(`${backendURL}/api/booking/delete-booking/${bookingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Booking cancelled successfully.');

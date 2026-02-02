@@ -7,6 +7,7 @@ function UserProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ function UserProfile() {
 
     try {
       let response = await axios.put(
-        "http://localhost:3000/api/users/change-password",
+        `${backendURL}/api/users/change-password`,
         {
            oldPassword,
            newPassword,

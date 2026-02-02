@@ -16,7 +16,7 @@ function TripSummary() {
 
   const handleConfirm = async () => {
   const token = localStorage.getItem("token");
-
+  const backendURL = import.meta.env.VITE_API_URL;
   if (!token) {
     toast.warning("You must be logged in to confirm a booking.");
     setShowAuthModal(true);
@@ -29,7 +29,7 @@ function TripSummary() {
   try {
    
     const savedTrip = await axios.post(
-      "http://localhost:3000/api/trip/createtrip",
+      `${backendURL}/api/trip/createtrip`,
       tripData,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -56,7 +56,7 @@ function TripSummary() {
 
    
     const paymentResponse = await axios.post(
-      "http://localhost:3000/api/payment/process",
+      `${backendURL}/api/payment/process`,
       {
         destinationId: tripData.selectedDestination._id,
         firstName: tripData.contactInfo.name.split(" ")[0],

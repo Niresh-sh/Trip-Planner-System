@@ -12,13 +12,15 @@ const AdminLogin = () => {
 
   const navigate = useNavigate();
 
+  const backendURL = import.meta.env.VITE_API_URL;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/users/login", {
+      const response = await axios.post(`${backendURL}/api/users/login`, {
         email,
         password,
       });
