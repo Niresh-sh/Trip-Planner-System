@@ -30,7 +30,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     setLoading(false);
   };
 
-  const backendURL = "http://localhost:3000";
+  const backendURL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
