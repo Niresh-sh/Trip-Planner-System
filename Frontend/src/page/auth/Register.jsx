@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import registerService from "../../services/RegisterService";
+import registerService from "../../Services/RegisterService.jsx";
 import { useState } from "react";
 
 function Register(isOpen, onClose) {
