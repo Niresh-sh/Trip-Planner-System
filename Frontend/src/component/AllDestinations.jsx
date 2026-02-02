@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+
 const AllDestinations = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
  const backendURL = import.meta.env.VITE_API_URL;

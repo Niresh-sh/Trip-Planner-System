@@ -21,10 +21,10 @@ function Body() {
   const [recommendedDestinations, setRecommendedDestinations] = useState([]);
   const [destinations, setDestinations] = useState([]);
   const token = localStorage.getItem("token");
-
+  const backendURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/destination/get-destination")
+    fetch(`${backendURL}/api/destination/get-destination`)
       .then((res) => res.json())
       .then((data) => {
         setAllDestinations(data?.destinations || []); 
@@ -92,7 +92,7 @@ function Body() {
 
         // or from auth context
         const res = await fetch(
-          `http://localhost:3000/api/recommend/recommendations/${userId}`
+          `${backendURL}/api/recommend/recommendations/${userId}`
         );
         if (!res.ok) throw new Error("Failed to fetch recommendations");
         const data = await res.json();
