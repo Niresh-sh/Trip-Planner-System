@@ -18,7 +18,7 @@ import ActivityRoute from "./Routes/ActivityRoute.js";
 import AnalyticsRoute from "./Routes/AnalyticsRoute.js";
 import PaymentRoute from "./Routes/PaymentRoute.js";
 import CompleteBooking from "./Controller/CompletedBookingController.js";
-import RecommendRoute from "./Routes/recommendRoute.js";
+import RecommendRoute from "./Routes/RecommendRoute.js";
 
 // background job
 
