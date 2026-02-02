@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import registerService from "../../services/RegisterService";
+import registerService from "../../Services/RegisterService";
 import loginImage from "../../assets/login.png";
 import { GoogleLogin } from "@react-oauth/google";
 
