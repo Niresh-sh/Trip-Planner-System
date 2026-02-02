@@ -36,7 +36,7 @@ CompleteBooking();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-let allowedOrigins = ["http://localhost:5173","https://trip-planner-system-1.onrender.com/"];
+let allowedOrigins = ["http://localhost:5173","https://trip-planner-system-1.onrender.com"];
 app.use(
   cors({
     origin: allowedOrigins,
