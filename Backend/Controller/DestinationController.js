@@ -150,7 +150,6 @@ const UpdateDestinationController = async (req, res) => {
       });
     }
 
-    // Log with destination title (not ID) — non-blocking
     if (req.user?._id) {
       logActivity({
         userId: req.user._id,
@@ -185,7 +184,7 @@ const DeleteDestinationController = async (req, res) => {
       });
     }
 
-    // Log with destination title (not ID) — non-blocking
+   
     if (req.user?._id) {
       logActivity({
         userId: req.user._id,

@@ -23,10 +23,10 @@ const AdminLogin = () => {
         password,
       });
 
-      const user = response.data; // expecting user object with token
+      const user = response.data; 
 
       if (user && user.token) {
-        // Save info to localStorage
+        
         localStorage.setItem("token", user.token);
         localStorage.setItem("id", user._id);
         localStorage.setItem("email", user.email);
@@ -57,7 +57,7 @@ const AdminLogin = () => {
 
   if (token && role !== "admin") {
     toast.error("You are logged in as a normal user. Please logout to access admin.");
-    navigate("/"); // or redirect to home
+    navigate("/"); 
   }
 }, []);
 
@@ -68,7 +68,7 @@ const AdminLogin = () => {
         {/* Close button - you can add functionality or remove */}
         <button
           className="absolute top-2 right-3 text-2xl text-gray-500 hover:text-black"
-          onClick={() => navigate("/")} // example: redirect to home on close
+          onClick={() => navigate("/")} 
           disabled={loading}
           aria-label="Close"
         >

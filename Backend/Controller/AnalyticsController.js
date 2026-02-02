@@ -41,8 +41,7 @@ export const getRevenueAnalytics = async (req, res) => {
   try {
     const { year, startDate, endDate, groupBy } = req.query;
 
-    // Only include completed or approved bookings
-    const statuses = ["approved", "success"];
+       const statuses = ["approved", "success"];
 
     let start = startDate ? new Date(startDate) : null;
     let end = endDate ? new Date(endDate) : null;
@@ -72,7 +71,7 @@ export const getRevenueAnalytics = async (req, res) => {
       else gb = "year";
     }
 
-    // Build group expression using startDate as reference
+   
     let groupIdExpr;
     let labels = [];
 
@@ -143,7 +142,6 @@ export const getRevenueAnalytics = async (req, res) => {
     const totalTrips = totalStats[0]?.totalTrips || 0;
     const avgRevenuePerTrip = totalTrips > 0 ? parseFloat((totalRevenue / totalTrips).toFixed(2)) : 0;
 
-    // Merge with labels to show 0 for missing periods
     const analytics = labels.map(lbl => {
       const rec = revenueData.find(r => String(r._id) === String(lbl));
       return { label: lbl, revenue: rec ? rec.totalRevenue : 0, trips: rec ? rec.tripCount : 0 };

@@ -31,9 +31,7 @@ export const refundKhaltiPayment = async (pidx) => {
   }
 };
 
-/**
- * Initialize Khalti Payment
- */
+
 export const initializePayment = async (req, res) => {
   try {
     const { destinationId, firstName, lastName, email, phone, totalCost, guideCost } = req.body;
@@ -75,9 +73,6 @@ export const initializePayment = async (req, res) => {
 };
 
 
-/**
- * Verify Khalti Payment
- */
 export const verifyPayment = async (req, res) => {
   try {
     const { pidx } = req.body;
@@ -106,10 +101,7 @@ export const verifyPayment = async (req, res) => {
 
 
 
-/**
- * User Cancels Booking
- * No refund
- */
+
 // export const userCancelBooking = async (req, res) => {
 //   try {
 //     const { bookingId } = req.params;

@@ -1,6 +1,6 @@
 import Activity from "../Models/ActivityModel.js";
 
-// GET all activities (latest first)
+// GET all activities
 export const getAllActivities = async (req, res) => {
   try {
     const activities = await Activity.find()

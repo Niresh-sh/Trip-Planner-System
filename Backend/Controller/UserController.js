@@ -240,7 +240,7 @@ const GoogleLoginController = async (req, res) => {
           password: "",
         });
 
-        // Log new user registration via Google
+   
         await logActivity({
           type: "user",
           user: user._id,
@@ -254,7 +254,7 @@ const GoogleLoginController = async (req, res) => {
     const token = jsonwebtoken.sign({ id: user._id, email: user.email }, process.env.SECURE, { expiresIn: "1d" });
     await UserTokenModel.create({ userId: user._id, token });
 
-    // Log Google login
+   
     await logActivity({
       type: "user",
       user: user._id,

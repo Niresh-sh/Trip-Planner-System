@@ -6,10 +6,10 @@ function UserDetails() {
   const lastName = localStorage.getItem("lastName") || "Not Available";
   const role = localStorage.getItem("role") || "Not Available";
 
-  // Try stored ids first
+
   let userId = localStorage.getItem("_id") || localStorage.getItem("userId");
 
-  // Fallback: decode token payload to get { id }
+  
   if (!userId) {
     const token = localStorage.getItem("token");
     if (token && token.split(".").length === 3) {

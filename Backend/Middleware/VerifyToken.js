@@ -15,10 +15,10 @@ const verifyToken = async (req, res, next) => {
     const user = await UserModel.findById(decoded.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    req.user = user; // Attach full Mongoose document
+    req.user = user; 
 
     if (req.user && req.user.id && !req.user._id) {
-      req.user._id = req.user.id; // normalize shape for controllers that expect _id
+      req.user._id = req.user.id; 
     }
     next();
   } catch (err) {

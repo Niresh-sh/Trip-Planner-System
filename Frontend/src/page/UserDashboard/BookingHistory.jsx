@@ -39,7 +39,7 @@ function BookingHistory() {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Booking cancelled successfully.');
-      fetchBookings(); // Refresh the list
+      fetchBookings(); 
     } catch (error) {
       alert('Failed to cancel booking.');
     }

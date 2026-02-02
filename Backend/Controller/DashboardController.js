@@ -48,10 +48,10 @@ const getDashboardStats = async (req, res) => {
 export const getTopDestinations = async (req, res) => {
   try {
     const top = await BookingModel.aggregate([
-      // 1️⃣ Only consider approved or successful bookings
+
       { $match: { status: { $in: ["approved", "success"] } } },
 
-      // 2️⃣ Group by destinationId to count bookings
+
       {
         $group: {
           _id: "$destinationId",
@@ -59,11 +59,11 @@ export const getTopDestinations = async (req, res) => {
         },
       },
 
-      // 3️⃣ Sort by bookings descending and limit top 5
+
       { $sort: { bookings: -1 } },
       { $limit: 5 },
 
-      // 4️⃣ Lookup destination details
+
       {
         $lookup: {
           from: "destinations",
@@ -74,7 +74,7 @@ export const getTopDestinations = async (req, res) => {
       },
       { $unwind: "$destination" },
 
-      // 5️⃣ Lookup category name
+
       {
         $lookup: {
           from: "categories",
@@ -85,7 +85,7 @@ export const getTopDestinations = async (req, res) => {
       },
       { $unwind: { path: "$categoryData", preserveNullAndEmptyArrays: true } },
 
-      // 6️⃣ Collapse duplicates (if any) and pick first
+
       {
         $group: {
           _id: "$_id",
@@ -96,7 +96,7 @@ export const getTopDestinations = async (req, res) => {
         },
       },
 
-      // 7️⃣ Final output
+ 
       {
         $project: {
           _id: 0,

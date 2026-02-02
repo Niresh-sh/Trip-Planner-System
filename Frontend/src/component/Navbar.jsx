@@ -12,7 +12,7 @@ function Navbar({ openLoginModal }) {
     localStorage.clear();
     const confirmLogout = window.confirm("Do you really want to logout?");
     if (confirmLogout) {
-      // You can add actual logout logic here (e.g., clear tokens, redirect, etc.)
+     
 
       localStorage.removeItem("_id"); // remove stored token
       localStorage.removeItem("email");
@@ -82,7 +82,7 @@ function Navbar({ openLoginModal }) {
                 </Link>
               </div> */}
               <div className="hidden sm:flex sm:items-center">
-                {/* Conditionally show Login or Logout */}
+               
                 {email ? (
                   <div className="relative group ">
                     <button
@@ -197,7 +197,7 @@ function Navbar({ openLoginModal }) {
           </div>
         </div>
 
-        {/* <!-- Mobile menu, show/hide based on menu state --> */}
+       
         <div className="sm:hidden hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link

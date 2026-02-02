@@ -147,7 +147,7 @@ const AdminDashboard = () => {
       try {
         const res = await fetch("http://localhost:3000/api/adminbooking", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // if you use auth
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
         });
         if (!res.ok) throw new Error("Failed to fetch bookings");
@@ -170,9 +170,9 @@ const AdminDashboard = () => {
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
 
-        // If user picked a single day, request hourly grouping so chart returns 24 buckets
+        
         const isSingleDay = startDate && endDate && startDate === endDate;
-        if (isSingleDay) params.append("groupBy", "hour");
+        if (isSingleDay) params.append("groupBy", "day");
 
         const res = await fetch(
           `http://localhost:3000/api/analytics/revenue?${params.toString()}`
@@ -181,8 +181,7 @@ const AdminDashboard = () => {
         const data = await res.json();
 
         let analytics = Array.isArray(data.analytics) ? data.analytics : [];
-        // FALLBACK: if single-day but backend returned a single daily bucket (YYYY-MM-DD),
-        // expand to 24 hourly buckets and place the total revenue at midday so chart is visible.
+ 
         if (isSingleDay && analytics.length === 1) {
           const singleLabel = analytics[0].label || "";
           if (/^\d{4}-\d{2}-\d{2}$/.test(singleLabel)) {
@@ -224,7 +223,7 @@ const AdminDashboard = () => {
     fetchRevenueAnalytics();
   }, [startDate, endDate]);
 
-  // Fetch top booked destinations
+
   useEffect(() => {
     const fetchTopDestinations = async () => {
       try {
@@ -234,7 +233,7 @@ const AdminDashboard = () => {
         if (!res.ok) throw new Error("Failed to fetch top destinations");
 
         const data = await res.json();
-        setTopDestinations(data); // Expected: [{ title, category, bookings, image }]
+        setTopDestinations(data); 
       } catch (err) {
         console.error(err);
       }
@@ -256,7 +255,7 @@ const AdminDashboard = () => {
       .catch((err) => console.error("Activities fetch error:", err));
   }, []);
 
-  // listen for real-time updates
+
 
   // Approve booking
   const handleApprove = async (id) => {
@@ -395,7 +394,7 @@ const AdminDashboard = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                     className="border rounded px-2 py-1"
                   />
-                  <button
+                  {/* <button
                     onClick={() => {
                       const today = new Date().toISOString().split("T")[0];
                       setStartDate(today);
@@ -404,7 +403,7 @@ const AdminDashboard = () => {
                     className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
                   >
                     Today
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -423,10 +422,10 @@ const AdminDashboard = () => {
   <div className="max-h-80 overflow-y-auto overflow-x-hidden">
     <ul className="space-y-3">
       {topdestinations
-        .sort((a, b) => b.bookings - a.bookings) // ensure descending order
+        .sort((a, b) => b.bookings - a.bookings) 
         .map((d, i) => (
           <li
-            key={d.title + i} // unique key
+            key={d.title + i}
             className="flex items-center gap-3 p-2 border-b last:border-none overflow-hidden"
           >
             {/* Image */}

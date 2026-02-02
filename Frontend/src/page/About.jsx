@@ -85,7 +85,7 @@ function About() {
       {/* Main Content */}
       <div className="bg-gray-100 px-5 md:px-14 pb-16">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-[340px_1fr_320px] gap-10">
-          {/* Left Vertical Image Stack */}
+          
           <div className="hidden lg:flex flex-col gap-6">
             <img
               src="/public/journey.svg"
@@ -99,9 +99,9 @@ function About() {
             />
           </div>
 
-          {/* Features + Mission + Contact */}
+          
           <div className="space-y-6">
-            {/* Features Grid */}
+           
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-start space-x-3 bg-white shadow-sm rounded-lg p-5">
                 <FaMountain className="text-green-600 text-2xl mt-1" />
@@ -145,7 +145,7 @@ function About() {
               </div>
             </div>
 
-            {/* Mission */}
+           
             <div className="bg-white shadow-sm rounded-lg p-6">
               <div className="flex items-center space-x-2 mb-3">
                 <FaHeart className="text-green-600 text-xl" />
@@ -157,7 +157,7 @@ function About() {
               </p>
             </div>
 
-            {/* Contact */}
+            
             <div className="bg-white shadow-sm rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Get in Touch</h3>
               <div className="space-y-4">
@@ -196,7 +196,7 @@ function About() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      www.nepalexplorer.com
+                      www.TripPlanner.com
                     </a>
                   </div>
                 </div>

@@ -17,10 +17,10 @@ export default function PlanTrip() {
 
   const [errors, setErrors] = useState({});
 
-  const includeGuide = true; // guide always included
+  const includeGuide = true; 
   const GUIDE_FEE = 1000;
 
-  // Prefill name/email from localStorage when the form loads
+  
   useEffect(() => {
     const firstName = localStorage.getItem("firstName") || "";
     const lastName = localStorage.getItem("lastName") || "";
@@ -73,12 +73,12 @@ export default function PlanTrip() {
     }
   }, [startDate]);
 
-  // Recommendations now depend only on budget, date, and persons
+ 
   const readyToRecommend = useMemo(() => {
     return Number(budget) > 0 && persons > 0 && isValidDate;
   }, [budget, persons, isValidDate]);
 
-  // Filter destinations by budget only (category removed)
+ 
   const recommendedDestinations = useMemo(() => {
     if (!readyToRecommend) return [];
 

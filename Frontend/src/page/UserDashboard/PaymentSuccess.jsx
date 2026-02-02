@@ -21,7 +21,7 @@ function PaymentSuccess() {
           return;
         }
 
-        // 1️⃣ Verify payment
+        // Verify payment
         const verifyRes = await axios.post(
           "http://localhost:3000/api/payment/verify",
           { pidx },
@@ -33,7 +33,7 @@ function PaymentSuccess() {
           return;
         }
 
-        // 2️⃣ Payment successful → create booking
+        //  Payment successful → create booking
         const bookingRes = await axios.post(
           "http://localhost:3000/api/booking/create-booking", // match backend route
           {
@@ -45,7 +45,7 @@ function PaymentSuccess() {
             contact: tripData.contact,
             guideIncluded: tripData.guideIncluded,
             guideFee: tripData.guideFee || 0,
-            paymentId: pidx, // <-- send pidx so backend can mark booking paid
+            paymentId: pidx, 
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -54,7 +54,7 @@ function PaymentSuccess() {
           toast.success("Booking created successfully!");
           localStorage.removeItem("PENDING_BOOKING_DATA");
 
-          // 3️⃣ Redirect to confirmed booking page
+          // Redirect to confirmed booking page
            const bookingId = bookingRes.data.booking._id; 
          navigate(`/booking-success/${bookingId}`);
 ;

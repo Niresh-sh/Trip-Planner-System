@@ -1,4 +1,4 @@
-// username, email, password, role, createdAt, updatedAt, isVerified, 
+ 
 import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema({

@@ -13,7 +13,7 @@ async function completeDueBookings() {
       endDate: { $lte: now },
     };
 
-    // Find bookings due for completion so we can collect guide IDs
+    
     const dueBookings = await Booking.find(filter).select("guide");
     if (!dueBookings || dueBookings.length === 0) {
       return;
@@ -33,7 +33,7 @@ async function completeDueBookings() {
       console.log(`Completed ${result.modifiedCount} bookings.`);
     }
 
-    // Collect unique guide IDs from the bookings and mark them available
+   
     const guideIds = [
       ...new Set(
         dueBookings

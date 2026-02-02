@@ -51,9 +51,9 @@ if (!data) return <div className="p-10">Destination not found.</div>;
           </p>
           <h1 className="text-4xl font-bold mb-2">{data.title}</h1>
           <div className="flex items-center gap-4 text-sm">
-            <span>📍 {data.location}</span>
+            <span> {data.location}</span>
             {/* <span>⭐ {data.rating} ({data.reviews} reviews)</span> */}
-            <span>🕒 {data.duration}</span>
+            <span> {data.duration}</span>
           </div>
           <p className="mt-4 text-lg w-full max-w-xl">
             Experience breathtaking sunrise views over the Himalayas on this scenic hiking trail offering panoramic vistas of snow-capped peaks and traditional Nepalese villages.

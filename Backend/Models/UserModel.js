@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const usersSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    required: false, // not all Google responses have this
+    required: false, 
   },
   lastName: {
     type: String,
@@ -16,12 +16,12 @@ const usersSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: false, // allow Google logins without password
+    required: false, 
   },
   google_id: {
     type: String,
     unique: true,
-    sparse: true, // allows multiple users without google_id
+    sparse: true, 
   },
   is_google_account: {
     type: Boolean,

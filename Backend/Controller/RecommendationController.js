@@ -3,21 +3,19 @@ import BookingModel from '../Models/BookingModel.js';
 import DestinationModel from '../Models/DestinationModel.js';
 import * as math from 'mathjs';
 
-/**
- * SVD/ALS-based Collaborative Filtering
- */
+
 const getRecommendations = async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // 1️⃣ Fetch all successful bookings
+    
 const bookings = await BookingModel.find({
   status: { $in: ['approved', 'success'] },
   paymentStatus: 'paid'
 });
 
 
-    // 2️⃣ Build user and destination maps
+    
     const userIds = [...new Set(bookings.map(b => b.userId.toString()))];
     const destIds = [...new Set(bookings.map(b => b.destinationId.toString()))];
 
@@ -26,17 +24,17 @@ const bookings = await BookingModel.find({
     userIds.forEach((id, i) => (userIndexMap[id] = i));
     destIds.forEach((id, i) => (destIndexMap[id] = i));
 
-    // 3️⃣ Create interaction matrix (users x destinations)
-    const R = math.zeros(userIds.length, destIds.length)._data; // 2D array
+    
+    const R = math.zeros(userIds.length, destIds.length)._data;
 
     bookings.forEach(b => {
       const uIdx = userIndexMap[b.userId.toString()];
       const dIdx = destIndexMap[b.destinationId.toString()];
-      R[uIdx][dIdx] = 1; // implicit feedback: booked = 1
+      R[uIdx][dIdx] = 1; 
     });
 
-    // 4️⃣ ALS factorization
-    const factors = 5; // latent features
+   
+    const factors = 5; 
     const iterations = 15;
     const lambda = 0.1;
 
@@ -73,7 +71,7 @@ const bookings = await BookingModel.find({
       }
     }
 
-    // 5️⃣ Compute scores for the target user
+    //  scores for the target user
     const uIdx = userIndexMap[userId];
     if (uIdx === undefined) return res.json({ recommendedDestinations: [] });
 
@@ -83,7 +81,7 @@ const bookings = await BookingModel.find({
       score: math.dot(userVector, V[idx]),
     }));
 
-    // Exclude already booked destinations
+    //  already booked destinations
     const bookedSet = new Set(R[uIdx].map((r, j) => r ? destIds[j] : null).filter(Boolean));
     const recommendations = scores
       .filter(s => !bookedSet.has(s.id))

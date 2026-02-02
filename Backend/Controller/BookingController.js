@@ -6,7 +6,6 @@ import logActivity from "../utils/logActivity.js";
 import { refundKhaltiPayment } from "./PaymentController.js";
 
 
-// CREATE BOOKING
 const createBooking = async (req, res) => {
   try {
     const {
@@ -16,43 +15,38 @@ const createBooking = async (req, res) => {
       startDate,
       totalCost,
       contact,
-      guideIncluded,
-      paymentId, // <-- accept optional payment id (pidx)
+      guideIncluded: guideFromBody,
+      paymentId,
     } = req.body;
 
-    guideIncluded = true;
-    if (
-      !tripId ||
-      !destinationId ||
-      !persons ||
-      !startDate ||
-      !totalCost ||
-      !contact
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Missing required booking data." });
+    let guideIncluded = true; // enforced business rule
+
+    if (!tripId || !destinationId || !persons || !startDate || !totalCost || !contact) {
+      return res.status(400).json({ message: "Missing required booking data." });
     }
 
     const userId = req.user._id;
 
     const trip = await Trip.findById(tripId);
-
     if (!trip) return res.status(404).json({ message: "Trip not found" });
+
+    // Optional: prevent overbooking
+    if (trip.maxPersons && persons > trip.maxPersons) {
+      return res.status(400).json({ message: "Not enough available spots for this trip." });
+    }
 
     let assignedGuide = null;
 
     if (guideIncluded) {
       assignedGuide = await GuideModel.findOneAndUpdate(
-  { status: "Available" },
-  { status: "Occupied", assignedDestination: destinationId },
-  { new: true }
-);
+        { status: "Available" },
+        { status: "Occupied", assignedDestination: destinationId },
+        { new: true }
+      );
 
-if (!assignedGuide) {
-  return res.status(400).json({ message: "No available guides at the moment." });
-}
-
+      if (!assignedGuide) {
+        return res.status(400).json({ message: "No available guides at the moment." });
+      }
     }
 
     const booking = new BookingModel({
@@ -64,12 +58,10 @@ if (!assignedGuide) {
       totalCost,
       contact,
       guideIncluded,
-      guide: guideIncluded ? assignedGuide._id : undefined,
+      guide: guideIncluded ? assignedGuide._id : null,
       status: "pending",
     });
 
-    // If paymentId (pidx) is present from frontend after successful verification,
-    // mark booking as paid/success and attach paymentId
     if (paymentId) {
       booking.paymentId = paymentId;
       booking.paymentStatus = "paid";
@@ -78,28 +70,27 @@ if (!assignedGuide) {
 
     await booking.save();
 
-    // populate destination title for response
-    await booking.populate("destinationId", "title");
-
-    // non-blocking activity (use destination title)
     const dest = await DestinationModel.findById(destinationId).select("title");
+
     logActivity({
-      userId: req.user._id,
+      userId,
       actionType: "create_booking",
       text: `Booking made by ${req.user.firstName} ${req.user.lastName} for ${
         dest?.title || "destination"
       }`,
       iconColor: "green",
-    }).catch(() => {});
+    });
 
-    
-
-    res.status(201).json({ message: "Booking created successfully", booking });
+    res.status(201).json({
+      message: "Booking created successfully",
+      booking,
+    });
   } catch (error) {
     console.error("Booking error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 // CANCEL BOOKING
 const cancelBooking = async (req, res) => {
@@ -254,8 +245,7 @@ const approveBooking = async (req, res) => {
   }
 };
 
-// DECLINE BOOKING
-// <-- IMPORTANT
+
 
 const declineBooking = async (req, res) => {
   try {

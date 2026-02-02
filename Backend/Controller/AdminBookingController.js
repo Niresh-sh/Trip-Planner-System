@@ -31,7 +31,7 @@ const approveBooking = async (req, res) => {
      .populate("destinationId", "title");
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    // keep casing consistent
+   
     booking.status = "approved";
     await booking.save();
 

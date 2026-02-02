@@ -16,10 +16,10 @@ import {
 import HomeGallery from "./HomeGallery";
 
 function Body() {
-  const [allDestinations, setAllDestinations] = useState([]); // all destinations for search
+  const [allDestinations, setAllDestinations] = useState([]); 
 
   const [recommendedDestinations, setRecommendedDestinations] = useState([]);
-  const [destinations, setDestinations] = useState([]); // 4 cards for display
+  const [destinations, setDestinations] = useState([]);
   const token = localStorage.getItem("token");
 
 
@@ -27,8 +27,8 @@ function Body() {
     fetch("http://localhost:3000/api/destination/get-destination")
       .then((res) => res.json())
       .then((data) => {
-        setAllDestinations(data?.destinations || []); // store all for search
-        setDestinations(data?.destinations?.slice(0, 4)); // only 4 for cards
+        setAllDestinations(data?.destinations || []); 
+        setDestinations(data?.destinations?.slice(0, 4)); 
       })
       .catch(console.error);
   }, []);
@@ -41,7 +41,7 @@ function Body() {
       setFiltered([]);
       return;
     }
-    //search across name, title, and location
+    
     const results = destinations.filter((dest) =>
       
       [dest.name, dest.title, dest.location].some((field) =>
@@ -133,8 +133,8 @@ function Body() {
             <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
               {filtered.map((dest) => {
                 const displayText = dest.name || dest.title || dest.location;
-                const regex = new RegExp(`(${query})`, "gi"); // match query, case-insensitive
-                const parts = displayText.split(regex); // split around the query
+                const regex = new RegExp(`(${query})`, "gi"); 
+                const parts = displayText.split(regex); 
                 return (
                   <li
                     key={dest._id}
@@ -189,7 +189,7 @@ function Body() {
 
             {/* Rating Badge */}
             {/* <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
-              <span className="text-orange-500">⭐</span>
+              <span className="text-orange-500"></span>
               <span className="text-gray-800 font-medium text-xs">
                 {dest.rating}
               </span>

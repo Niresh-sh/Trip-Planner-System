@@ -12,10 +12,9 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear all auth info
-    localStorage.clear(); // removes token, role, user info etc.
+  
+    localStorage.clear(); 
 
-    // Redirect to home or login page
     navigate("/", { replace: true });
   };
 

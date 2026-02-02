@@ -12,7 +12,7 @@ const activitySchema = new mongoose.Schema(
     iconColor: { type: String, required: true },
   },
   {
-    timestamps: true, // automatically adds createdAt and updatedAt
+    timestamps: true, 
   }
 );
 

@@ -5,7 +5,7 @@ const bookingSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Assumes user auth is in place
+      ref: "User", 
       required: true,
     },
     tripId: {
@@ -67,11 +67,10 @@ const bookingSchema = new mongoose.Schema(
       default: "pending",
     },
 
-    paymentId: { type: String, default: null }, // Khalti pidx
+    paymentId: { type: String, default: null }, 
     paymentMethod: { type: String, default: "khalti" },
-    paymentDetails: { type: Object, default: {} }, // optional
+    paymentDetails: { type: Object, default: {} }, 
 
-    // Added: timestamp when booking was completed / marked success
     completedAt: {
       type: Date,
     },

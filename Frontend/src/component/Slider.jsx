@@ -17,7 +17,7 @@ const ImageSlider = () => {
     },
     {
       image:
-        "https://snowpaltreks.com/wp-content/uploads/2023/06/pexels-volker-meyer-12857684-1.jpg",
+        "https://www.gokitetours.com/wp-content/uploads/2024/12/2.-Pokhara-%E2%80%93-A-Tranquil-Lakeside-Escape.webp",
       title: "Breathe the Mountain Air",
       subtitle: "Escape the ordinary in nature’s grandest cathedral",
     },

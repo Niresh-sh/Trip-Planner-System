@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify"; // ensure toast is imported
+import { toast } from "react-toastify"; 
 
 function BookingConfirmed() {
   const { bookingId } = useParams();
@@ -26,7 +26,7 @@ function BookingConfirmed() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        // assume API returns { booking: {...} }
+       
         setBooking(res.data.booking || res.data); 
       })
       .catch((err) => {

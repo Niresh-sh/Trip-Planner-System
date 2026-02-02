@@ -27,9 +27,7 @@ function TripSummary() {
   setError("");
 
   try {
-    // --------------------------
-    // 1. CREATE TRIP (your logic)
-    // --------------------------
+   
     const savedTrip = await axios.post(
       "http://localhost:3000/api/trip/createtrip",
       tripData,
@@ -39,7 +37,7 @@ function TripSummary() {
     );
     console.log("Trip created:", savedTrip.data);
 
-    // Save trip + booking data so we can use it after Khalti redirect
+    
     const completeBookingPayload = {
       tripId: savedTrip.data._id,
       destinationId: tripData.selectedDestination._id,
@@ -56,9 +54,7 @@ function TripSummary() {
       JSON.stringify(completeBookingPayload)
     );
 
-    // ---------------------------------
-    // 2. INITIALIZE KHALTI PAYMENT HERE
-    // ---------------------------------
+   
     const paymentResponse = await axios.post(
       "http://localhost:3000/api/payment/process",
       {
@@ -82,10 +78,10 @@ function TripSummary() {
       return;
     }
 
-    // Redirect to Khalti page
+   
     window.location.href = payment_url;
 
-    // After this point, the code stops because user is redirected
+    
   } catch (err) {
     console.error("Booking error:", err);
     const message = err?.response?.data?.message || "Booking failed.";
