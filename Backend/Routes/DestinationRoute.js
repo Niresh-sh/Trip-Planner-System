@@ -4,9 +4,9 @@ import { CreateDestinationController, DeleteDestinationController, getAllDestina
 import express from "express";
 const router = express.Router();
 
-router.post("/create-destination", uploadProductImage, CreateDestinationController);
+router.post("/create-destination",  CreateDestinationController);
 router.get("/get-destination", getAllDestinationController);
-router.put("/update-destination/:id", uploadProductImage, UpdateDestinationController);
+router.put("/update-destination/:id", UpdateDestinationController);
 router.delete("/delete-destination/:id", DeleteDestinationController);
 router.get("/get-destination/:id", GetSingleDestinationController);
 
