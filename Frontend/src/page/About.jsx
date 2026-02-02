@@ -88,11 +88,13 @@ function About() {
           
           <div className="hidden lg:flex flex-col gap-6">
             <img
+            type="image/svg+xml"
               src="/public/journey.svg"
               alt="Journey Illustration"
               className="w-full h-auto bg-gray p-4"
             />
             <img
+            type="image/svg+xml"
               src="/public/Rio.svg"
               alt="Travelers"
               className="w-full h-auto bg-gray p-4"
@@ -207,11 +209,13 @@ function About() {
           {/* Right Decorative Image Column */}
           <div className="hidden md:flex flex-col justify-between gap-6">
             <img
+            type="image/svg+xml"  
               src="/public/journey1.svg"
               alt="Scenic Illustration"
               className="w-full h-auto bg-gray p-4"
             />
             <img
+              type="image/svg+xml"
               src="/public/travelers.svg"
               alt="Adventure"
               className="w-full h-auto bg-gray p-4"
