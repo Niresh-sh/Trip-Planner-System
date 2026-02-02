@@ -4,17 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 
 const AllDestinations = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
-
+ const backendURL = import.meta.env.VITE_API_URL;
   const { isPending, error, data } = useQuery({
     queryKey: ["destinations"],
     queryFn: () =>
-      fetch("http://localhost:3000/api/destination/get-destination").then(
+      fetch(`${backendURL}/api/destination/get-destination`).then(
         (res) => res.json()
       ),
   });
 
   const navigate = useNavigate();
-  const backendURL = import.meta.env.VITE_API_URL;
+ 
   const {
     data: categoryData,
     isLoading: isCategoryLoading,
