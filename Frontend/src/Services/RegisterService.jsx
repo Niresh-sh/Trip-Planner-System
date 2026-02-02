@@ -2,8 +2,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const RegisterService = async (firstName, lastName, email, password, confirmPassword, navigate) => {
+  const Api = import.meta.env.VITE_API_URL;
   try {
-    let response = await axios.post("http://localhost:3000/api/users/register", {
+    let response = await axios.post(`${Api}/api/users/register`, {
       firstName: firstName,
       lastName: lastName,
       email: email,

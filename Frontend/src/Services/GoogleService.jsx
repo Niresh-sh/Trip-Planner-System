@@ -3,11 +3,11 @@ import axios from "axios";
 
 const HandleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-    
+    const backendURL = import.meta.env.VITE_API_URL;
       const idToken = credentialResponse.credential;
 
       const response = await axios.post(
-        "http://localhost:3000/google-login",
+        `${backendURL}/google-login`,
         { id_token: idToken }
       );
       console.log("Google Login response:", response.data);

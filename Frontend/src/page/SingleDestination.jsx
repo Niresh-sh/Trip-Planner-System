@@ -11,13 +11,14 @@ const SingleDestination = () => {
   const [error, setError] = useState(null);
 
   const GoogleMap = import.meta.env.VITE_GOOGLE_MAP
+  const backendURL = import.meta.env.VITE_API_URL;
   
 
 useEffect(() => {
    console.log("useParams id:", id);
   if (!id) return;
 
-  fetch(`http://localhost:3000/api/destination/get-destination/${id}`)
+  fetch(`${backendURL}/api/destination/get-destination/${id}`)
     .then(res => {
       if (!res.ok) throw new Error("Failed to fetch destinations");
       return res.json();

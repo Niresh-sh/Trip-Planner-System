@@ -14,7 +14,7 @@ const AllDestinations = () => {
   });
 
   const navigate = useNavigate();
-
+  const backendURL = import.meta.env.VITE_API_URL;
   const {
     data: categoryData,
     isLoading: isCategoryLoading,
@@ -22,7 +22,7 @@ const AllDestinations = () => {
   } = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
-      fetch("http://localhost:3000/api/category/get-category") // update to your real URL
+      fetch(`${backendURL}/api/category/get-category`) // update to your real URL
         .then((res) => res.json()),
   });
 
