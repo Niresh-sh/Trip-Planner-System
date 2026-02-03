@@ -69,7 +69,7 @@ app.use(express.static(path.join(__dirname, "../Frontend/build")));
 
 app.get("/", (req, res) => res.send("API is running"));
 
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../Frontend/build", "index.html"));
 });
 
