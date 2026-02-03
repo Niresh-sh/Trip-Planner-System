@@ -30,7 +30,7 @@ const httpServer = http.createServer(app);
 const io = initSocket(httpServer);
 
 const port = process.env.PORT || 5000;
-
+const __dirname = path.resolve();
 Connect();
 CompleteBooking();
 app.use(express.json());
@@ -63,6 +63,12 @@ app.use("/api/analytics", AnalyticsRoute);
 app.use("/api/payment", PaymentRoute);
 app.use("/api/recommend", RecommendRoute);
 
+
+app.use(express.static(path.join(__dirname, "Frontend/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "Frontend/build", "index.html"));
+});
 app.get("/", (req, res) => res.send("API is running"));
 
 httpServer.listen(port, () => {
