@@ -9,7 +9,7 @@ router.get('/', getAllActivities);
 // Fetch user-specific activities
 router.get('/user/:userId', getUserActivities);
 
-// Delete an activity (admin)
+// Delete an activity (admin) - must come AFTER more specific routes
 router.delete('/:id', deleteActivity);
 
 export default router;

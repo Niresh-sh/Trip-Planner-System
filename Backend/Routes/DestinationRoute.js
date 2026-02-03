@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post("/create-destination",  CreateDestinationController);
 router.get("/all", getAllDestinationController);
-router.get("/:id", GetSingleDestinationController);
 router.put("/update-destination/:id", UpdateDestinationController);
 router.delete("/delete-destination/:id", DeleteDestinationController);
+router.get("/:id", GetSingleDestinationController);
 
 export default router;
