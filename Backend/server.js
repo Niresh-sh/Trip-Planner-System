@@ -51,18 +51,18 @@ app.use(
 app.use("/uploads", express.static("uploads"));
 
 // mount routes
-app.use("/api/users", UserRoute);
-app.use("/api/category", CategoryRoute);
-app.use("/api/destination", DestinationRoute);
-app.use("/api/guide", GuideRoute);
-app.use("/api/trip", TripRoute);
-app.use("/api/booking", BookingRoute);
-app.use("/api/stats", StatsRoute);
-app.use("/api/adminbooking", AdminBookingRoute);
-app.use("/api/activity", ActivityRoute);
-app.use("/api/analytics", AnalyticsRoute);
-app.use("/api/payment", PaymentRoute);
-app.use("/api/recommend", RecommendRoute);
+// app.use("/api/users", UserRoute);
+// app.use("/api/category", CategoryRoute);
+// app.use("/api/destination", DestinationRoute);
+// app.use("/api/guide", GuideRoute);
+// app.use("/api/trip", TripRoute);
+// app.use("/api/booking", BookingRoute);
+// app.use("/api/stats", StatsRoute);
+// app.use("/api/adminbooking", AdminBookingRoute);
+// app.use("/api/activity", ActivityRoute);
+// app.use("/api/analytics", AnalyticsRoute);
+// app.use("/api/payment", PaymentRoute);
+// app.use("/api/recommend", RecommendRoute);
 
 
 app.use(express.static(path.join(__dirname, "../Frontend/build")));
