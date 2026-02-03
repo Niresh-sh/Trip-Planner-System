@@ -4,6 +4,7 @@ import http from "http";
 import cors from "cors";
 import Connect from "./Config/db.js";
 import initSocket from "./Socket.js";
+import path from "path";
 
 // routes
 import UserRoute from "./Routes/UserRoute.js";
