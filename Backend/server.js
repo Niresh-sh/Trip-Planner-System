@@ -67,11 +67,14 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(express.static(path.join(__dirname, "../Frontend/build")));
 
-app.get("/", (req, res) => res.send("API is running"));
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 
-app.get("/*", (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../Frontend/build", "index.html"));
 });
+
 
 httpServer.listen(port, () => {
   console.log(`listening on Port ${port}`);
