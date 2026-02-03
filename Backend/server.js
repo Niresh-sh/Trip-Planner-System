@@ -67,9 +67,10 @@ app.use("/api/recommend", RecommendRoute);
 
 app.use(express.static(path.join(__dirname, "../Frontend/build")));
 
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../Frontend/build", "index.html"));
 });
+
 app.get("/", (req, res) => res.send("API is running"));
 
 httpServer.listen(port, () => {
