@@ -5,9 +5,9 @@ import express from "express";
 const router = express.Router();
 
 router.post("/create-destination",  CreateDestinationController);
-router.get("/get-destination", getAllDestinationController);
+router.get("/all", getAllDestinationController);
+router.get("/:id", GetSingleDestinationController);
 router.put("/update-destination/:id", UpdateDestinationController);
 router.delete("/delete-destination/:id", DeleteDestinationController);
-router.get("/get-destination/:id", GetSingleDestinationController);
 
 export default router;
