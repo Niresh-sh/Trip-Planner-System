@@ -43,7 +43,7 @@ export const initializePayment = async (req, res) => {
     let totalAmount =  (totalCost || 0)  * 100;
 
     const payload = {
-      return_url: "https://trip-planner-system-1.onrender.com/payment-success",
+      return_url: "https://trip-planner-system.onrender.com/payment-success",
       website_url: "https://trip-planner-system.onrender.com",
       amount: totalAmount,
       purchase_order_id: `ORD-${Date.now()}`,
