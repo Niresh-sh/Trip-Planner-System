@@ -269,7 +269,7 @@ export default function PlanTrip() {
         </div>
 
         {/* Destination Section */}
-        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 lg:p-7 flex flex-col lg:sticky lg:top-6">
+        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 flex flex-col lg:sticky lg:top-6 min-h-[400px]">
           <h2 className="text-lg font-semibold text-green-700 mb-2">
             Recommended Destinations
           </h2>
@@ -284,7 +284,10 @@ export default function PlanTrip() {
               persons.
             </p>
           ) : (
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[400px] sm:max-h-[520px] overflow-y-auto pr-1">
+           <div className="grid gap-4 
+                grid-cols-[repeat(auto-fit,minmax(240px,1fr))] 
+                max-h-[500px] lg:max-h-[520px] 
+                overflow-y-auto pr-1">
               {recommendedDestinations.map((dest) => {
                 const total =
                   (Number(dest.cost) || 0) * persons +
@@ -294,7 +297,7 @@ export default function PlanTrip() {
                   <div
                     key={dest._id}
                     onClick={() => setSelectedDestination(dest)}
-                    className={`group rounded-xl overflow-hidden border p-2 cursor-pointer transition transform hover:-translate-y-0.5 ${
+                    className={`group w-full rounded-xl overflow-hidden border p-3 cursor-pointer transition transform hover:-translate-y-0.5 ${
                       isSelected
                         ? "border-emerald-500 ring-2 ring-emerald-200"
                         : "border-gray-200 hover:shadow-md"
@@ -304,7 +307,7 @@ export default function PlanTrip() {
                       <img
                         src={dest.image}
                         alt={dest.title}
-                        className="w-full h-32 sm:h-36 object-cover rounded-lg"
+                        className="w-full aspect-[4/3] object-cover rounded-lg"
                       />
                       <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition" />
                     </div>
