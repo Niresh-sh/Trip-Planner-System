@@ -1,10 +1,11 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import Login from "../page/auth/AdminLogin";
 import { toast } from "react-toastify";
 
 function Navbar({ openLoginModal }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const email = localStorage.getItem("email");
 
@@ -12,8 +13,6 @@ function Navbar({ openLoginModal }) {
     localStorage.clear();
     const confirmLogout = window.confirm("Do you really want to logout?");
     if (confirmLogout) {
-     
-
       localStorage.removeItem("_id"); // remove stored token
       localStorage.removeItem("email");
       navigate("/");
@@ -82,7 +81,6 @@ function Navbar({ openLoginModal }) {
                 </Link>
               </div> */}
               <div className="hidden sm:flex sm:items-center">
-               
                 {email ? (
                   <div className="relative group ">
                     <button
@@ -98,42 +96,42 @@ function Navbar({ openLoginModal }) {
 
                     {/* User Dropdown */}
                     {dropdownOpen && (
-  <div className="absolute right-0 mt-2 w-56 bg-gray-300 rounded-xl shadow-xl 
-                  z-[100] overflow-hidden transition-all duration-200 text-white">
+                      <div
+                        className="absolute right-0 mt-2 w-56 bg-gray-300 rounded-xl shadow-xl 
+                  z-[100] overflow-hidden transition-all duration-200 text-white"
+                      >
+                        {/* Email */}
+                        <div className="p-3 border-b border-green-100 bg-green-700">
+                          <p className="text-sm font-semibold truncate w-full">
+                            {email}
+                          </p>
+                        </div>
 
-    {/* Email */}
-    <div className="p-3 border-b border-green-100 bg-green-700">
-      <p className="text-sm font-semibold truncate w-full">
-        {email}
-      </p>
-    </div>
-
-    {/* Dashboard */}
-    <ul className="py-2">
-      <li>
-        <NavLink
-          to="/dashboard/userdetails"
-          className="dropdown-link block px-4 py-2 hover:bg-green-500 
+                        {/* Dashboard */}
+                        <ul className="py-2">
+                          <li>
+                            <NavLink
+                              to="/dashboard/userdetails"
+                              className="dropdown-link block px-4 py-2 hover:bg-green-500 
                      transition rounded-md text-green-900 font-semibold"
-        >
-          Dashboard
-        </NavLink>
-      </li>
-    </ul>
+                            >
+                              Dashboard
+                            </NavLink>
+                          </li>
+                        </ul>
 
-    {/* Logout */}
-    <div className="py-2">
-      <button
-        onClick={handleLogout}
-        className="block w-full text-left dropdown-link px-4 py-2 
+                        {/* Logout */}
+                        <div className="py-2">
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full text-left dropdown-link px-4 py-2 
                    text-green-900 font-semibold hover:bg-green-500 transition rounded-md"
-      >
-        Logout
-      </button>
-    </div>
-  </div>
-)}
-
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="hidden md:flex space-x-4">
@@ -171,10 +169,43 @@ function Navbar({ openLoginModal }) {
               <div className="sm:hidden">
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                  aria-expanded="false"
-                  id="mobile-menu-button"
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white"
                 >
+                  {mobileOpen ? (
+                    // X icon
+                    <svg
+                      className="h-6 w-6"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  ) : (
+                    // Hamburger icon
+                    <svg
+                      className="h-6 w-6"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                  )}
+                  
                   <span className="sr-only">Open main menu</span>
                   <svg
                     className="block h-6 w-6"
@@ -197,47 +228,66 @@ function Navbar({ openLoginModal }) {
           </div>
         </div>
 
-       
-        <div className="sm:hidden hidden" id="mobile-menu">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              to="/"
-              className="bg-gray-600 text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Home
-            </Link>
+        <div
+  className={`sm:hidden transition-all duration-300 ease-in-out ${
+    mobileOpen ? "block" : "hidden"
+  }`}
+>
+          <div className="px-4 pt-4 pb-6 space-y-3 bg-green-700 rounded-b-xl">
+  <Link
+    to="/"
+    onClick={() => setMobileOpen(false)}
+    className="block text-white px-3 py-2 rounded-md text-base font-medium hover:bg-green-800"
+  >
+    Home
+  </Link>
 
-            <Link
-              to="About"
-              className="text-gray-900 hover:bg-gray-600 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              About
-            </Link>
-            <Link
-              to="Contact"
-              className="text-gray-900 hover:bg-gray-600 block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Contact
-            </Link>
+  <Link
+    to="Destinations"
+    onClick={() => setMobileOpen(false)}
+    className="block text-white px-3 py-2 rounded-md text-base font-medium hover:bg-green-800"
+  >
+    Destinations
+  </Link>
 
-            {/* <div className="pt-4 pb-3 border-t border-gray-200"> */}
-            {/* <div className="flex items-center px-3 space-y-2 flex-col"> */}
-            {/* Conditionally show Login or Logout */}
-            {/* {!email ? ( */}
-            {/* <Link to="Login" */}
-            {/* className="block w-full text-center bg-indigo-600 text-white px-3 py-2 rounded-md text-base font-medium" */}
-            {/* > */}
-            {/* Login */}
-            {/* </Link> */}
-            {/* ) : ( */}
-            {/* <button onClick={handleLogout} className="md:flex border-2 px-5 py-3 bg-white text-red-600 rounded-full hover:bg-gray-100"> */}
-            {/* <FaUser /> */}
-            {/* <span className="hidden md:inline ml-2">Logout</span> */}
-            {/* </button> */}
-            {/* )} */}
-            {/* </div> */}
-            {/* </div> */}
-          </div>
+  <Link
+    to="About"
+    onClick={() => setMobileOpen(false)}
+    className="block text-white px-3 py-2 rounded-md text-base font-medium hover:bg-green-800"
+  >
+    About
+  </Link>
+
+  <Link
+    to="PlanTrip"
+    onClick={() => setMobileOpen(false)}
+    className="block text-white px-3 py-2 rounded-md text-base font-medium hover:bg-green-800"
+  >
+    Plan Trip
+  </Link>
+
+  {!email ? (
+    <button
+      onClick={() => {
+        openLoginModal();
+        setMobileOpen(false);
+      }}
+      className="w-full mt-3 bg-slate-800 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-900"
+    >
+      Login
+    </button>
+  ) : (
+    <button
+      onClick={() => {
+        handleLogout();
+        setMobileOpen(false);
+      }}
+      className="w-full mt-3 bg-slate-800 text-white px-4 py-2 rounded-md font-medium hover:bg-slate-900"
+    >
+      Logout
+    </button>
+  )}
+</div>
         </div>
       </nav>
     </div>

@@ -107,56 +107,58 @@ function Body() {
   return (
     <>
       {/* <FadeInSection> */}
-      <section className="relative z-[99]  text-center bg-gray-100 pt-3 pb-12">
-        <h1 className="text-4xl p-4 font-bold justify-center">Where To?</h1>
+<section className="relative z-[99] text-center bg-gray-100 pt-6 pb-10 px-4">
+  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+    Where To?
+  </h1>
 
-        <div className="relative w-full max-w-xl mx-auto">
-          <input
-            placeholder="e.g. kathmandu"
-            className="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-white shadow-xl hover:outline-none focus:ring-green-500 focus:border-green-400"
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <div
-            className="absolute inline-flex items-center justify-center h-16 w-16 text-green-500 
-             transition duration-150 ease-in-out rounded-full outline-none right-3  
-              focus:outline-none focus:ring-2 
-             focus:ring-offset-2 focus:ring-green-500 "
-            onClick={() => {
-              if (filtered.length > 0) onSelect(filtered[0]);
-            }}
-          >
-            <FaSearchLocation />
-          </div>
-          {filtered.length > 0 && (
-            <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
-              {filtered.map((dest) => {
-                const displayText = dest.name || dest.title || dest.location;
-                const regex = new RegExp(`(${query})`, "gi"); 
-                const parts = displayText.split(regex); 
-                return (
-                  <li
-                    key={dest._id}
-                    onClick={() => onSelect(dest)}
-                    className="cursor-pointer px-4 py-2 hover:bg-green-100"
-                  >
-                    {parts.map((part, i) =>
-                      regex.test(part) ? (
-                        <span key={i} className="bg-yellow-200">
-                          {part}
-                        </span>
-                      ) : (
-                        <span key={i}>{part}</span>
-                      )
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-      </section>
+  <div className="relative w-full max-w-xl mx-auto">
+    <input
+      placeholder="e.g. kathmandu"
+      className="rounded-full w-full h-14 sm:h-16 bg-white py-2 pl-6 sm:pl-8 pr-20 sm:pr-28 outline-none border border-gray-200 shadow-lg focus:ring-2 focus:ring-green-500 focus:border-green-400 transition"
+      type="text"
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+    />
+
+    <div
+      className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 text-green-500 rounded-full cursor-pointer hover:bg-green-50 transition"
+      onClick={() => {
+        if (filtered.length > 0) onSelect(filtered[0]);
+      }}
+    >
+      <FaSearchLocation size={18} />
+    </div>
+
+    {filtered.length > 0 && (
+      <ul className="absolute z-[1000] w-full bg-white border rounded-md mt-2 max-h-60 overflow-auto shadow-lg text-left">
+        {filtered.map((dest) => {
+          const displayText = dest.name || dest.title || dest.location;
+          const regex = new RegExp(`(${query})`, "gi");
+          const parts = displayText.split(regex);
+
+          return (
+            <li
+              key={dest._id}
+              onClick={() => onSelect(dest)}
+              className="cursor-pointer px-4 py-2 hover:bg-green-100 text-sm sm:text-base"
+            >
+              {parts.map((part, i) =>
+                regex.test(part) ? (
+                  <span key={i} className="bg-yellow-200">
+                    {part}
+                  </span>
+                ) : (
+                  <span key={i}>{part}</span>
+                )
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+</section>
       {/* </FadeInSection> */}
 
       {/* <FadeInSection> */}
@@ -165,14 +167,14 @@ function Body() {
 
      {token && (
   <section className="max-w-7xl mx-auto px-4 py-12">
-    <h2 className="text-3xl font-bold text-gray-800 mb-2">
+    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
       Recommended Destinations
     </h2>
     <p className="text-gray-600 mb-6">
       Based on your interests and past trips
     </p>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {recommendedDestinations?.map((dest) => (
         <div
           key={dest._id}
@@ -239,13 +241,13 @@ function Body() {
 
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
           Featured Destinations
         </h2>
         <p className="text-gray-600 mb-6">
           Discover our most loved destinations from Nepal
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {destinations?.map((dest) => (
             <div
               key={dest._id}
@@ -257,7 +259,7 @@ function Body() {
                 <img
                   src={dest.image}
                   alt={dest.title}
-                  className="w-full h-56 object-cover"
+                  className="w-full h-48 sm:h-52 md:h-56 object-cover"
                 />
                 {/* Rating Badge */}
                 {/* <span className="absolute top-2 left-2 bg-white text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
@@ -308,16 +310,16 @@ function Body() {
         </div>
       </section>
 
-      <section className="bg-gray-100 py-12 h-[60vh]">
+      <section className="bg-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
             How It Works
           </h2>
           <p className="text-gray-500 mb-10">
             Creating your perfect trip is easier than ever with our simple
             3-step process
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="bg-gray-100 p-5 rounded-xl mb-4 shadow-sm">
                 <FaMapMarkerAlt className="text-green-500 text-3xl" />
@@ -372,7 +374,7 @@ function Body() {
 
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
             Why Choose Trip Planner?
           </h2>
           <p className="text-center text-gray-500 mb-12">
@@ -380,7 +382,7 @@ function Body() {
             put you in control of your adventure
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
             {/* Card 1 */}
             <div className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition">
               <div className="mb-4">
