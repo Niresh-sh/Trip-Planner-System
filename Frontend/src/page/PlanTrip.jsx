@@ -154,9 +154,9 @@ export default function PlanTrip() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-emerald-50">
-      <div className="max-w-6xl mx-auto p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
         {/* Form Section */}
-        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 lg:p-7">
+        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 sm:p-6">
           <h2 className="text-2xl font-bold text-emerald-700 mb-4">
             Plan Your Dream Trip
           </h2>
@@ -284,7 +284,7 @@ export default function PlanTrip() {
               persons.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[520px] overflow-y-auto pr-1">
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[400px] sm:max-h-[520px] overflow-y-auto pr-1">
               {recommendedDestinations.map((dest) => {
                 const total =
                   (Number(dest.cost) || 0) * persons +
@@ -304,7 +304,7 @@ export default function PlanTrip() {
                       <img
                         src={dest.image}
                         alt={dest.title}
-                        className="w-full h-32 md:h-36 object-cover rounded-lg"
+                        className="w-full h-32 sm:h-36 object-cover rounded-lg"
                       />
                       <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition" />
                     </div>
@@ -324,14 +324,14 @@ export default function PlanTrip() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center justify-between">
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium">
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <span className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium w-full sm:w-auto">
               Total Cost: ₹{calculateTotalCost()}
             </span>
             <button
               onClick={handleTripSummary}
               disabled={!selectedDestination}
-              className={`py-2.5 px-4 rounded-xl text-white font-semibold transition ${
+             className={`py-2.5 px-4 w-full sm:w-auto rounded-xl text-white font-semibold transition ${
                 selectedDestination
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow"
                   : "bg-gray-300 cursor-not-allowed"
